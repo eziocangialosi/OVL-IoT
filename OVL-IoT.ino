@@ -1,13 +1,11 @@
 #include "Tracker.h"
 
-void setup() {
-  Tracker* iot;
-  iot = new Tracker();
+Tracker g_iot;
 
-  
+void setup() {
+  g_iot.beg();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  g_iot.actionInLoop();
 }

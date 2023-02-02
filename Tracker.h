@@ -3,18 +3,21 @@
 
 #include "SerialDebug.h"
 #include "Locator.h"
+#include "Communicator.h"
 
 class Tracker
   {
     public:
-      Tracker();
+      void beg();
       void whenMqttRx(String payload);
-
+      bool actionInLoop();
     private:
       bool checkInitParam();
       void beginAlarm();
+
+      bool alarm_is_on = false;
     
-      //Communicator* cellular;
+      Communicator* cellular;
       SerialDebug* usbDebug;
       Locator* positioning;
   };

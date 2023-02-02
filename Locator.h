@@ -1,6 +1,8 @@
 #ifndef LOCATOR_H
 #define LOCATOR_H
 
+#define DP_POS 4
+
 #include <TinyGPSPlus.h>
 
 #include "SerialDebug.h"
@@ -13,13 +15,14 @@ class Locator
       void enterPrtMode();
       bool getPos(float* crntLon, float* crntLat);
       bool getPrtPos(float* aPrtLon, float* aPrtLat);
-      void setIntervalAlmMode(unsigned int secs);
+      void setInterval(unsigned int secs);
 
     private:
       float prtLon;
       float prtLat;
       float lastLon;
       float lastLat;
+      unsigned int safeZoneDiam = 5;
       SerialDebug* pUsbDebug;
       TinyGPSPlus* gps;
       unsigned int interval;
@@ -29,6 +32,7 @@ class Locator
       void acquire_nmea_while_ms(unsigned long ms);
       bool waitGPSFix(unsigned long max_wait_sec);
       void rqPos();
+      float round_float_dp(float in_value, int decimal_place);
   };
 
 
