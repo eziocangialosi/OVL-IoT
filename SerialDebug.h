@@ -2,6 +2,7 @@
 #define SERIALDEBUG_H
 
 #include "Arduino.h"
+#include "config.h"
 
 #define MSG_BORDER  "=================================="
 #define VERSION_MSG "OpenVehiculeLocator ProofOfConcept"

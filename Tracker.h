@@ -9,13 +9,19 @@ class Tracker
   {
     public:
       void beg();
-      void whenMqttRx(String payload);
-      bool actionInLoop();
+      void actionInLoop();
     private:
       bool checkInitParam();
       void beginAlarm();
+      void whenMqttRx(String payload);
+      void sendPos(float aLon, float aLat);
+      void parseParamFrame(String payload);
 
       bool alarm_is_on = false;
+      bool waitForParam = false;
+      bool paramSetted = false;
+      bool allowChargeOnVehicle = false;
+      bool eco_mode = false;
     
       Communicator* cellular;
       SerialDebug* usbDebug;

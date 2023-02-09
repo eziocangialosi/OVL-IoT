@@ -1,24 +1,40 @@
 #ifndef COMMUNICATOR_H
 #define COMMUNICATOR_H
 
+#define TRACKER_CALLBACK_SIG std::function<void(String)> calledWhenMsg
+
+#include "SerialDebug.h"
+
 #include <PubSubClient.h>
 #include <TinyGsmClient.h>
-
-#include "Tracker.h"
 
 class Communicator
   {
     public:
-      Communicator(SerialDebug* apSerialDebug/*,const sParam asParam*/);
-      bool connectNetwork();
-      bool sendMqtt(String aFrame);
-      static void Tracker::whenMqttRx(String payload);
-      bool getIsConnected();
+      Communicator(SerialDebug* apSerialDebug); //Constructor, pointor to serial debug class needed to send debug info
+      bool connectGPRS(); //Connect GPRS
+      bool connectMQTT(); //(Re)connect MQTT
+      bool sendMqtt(String aFrame); //Send an MQTT message on the TX topic
+      bool getIsConnected(); //Get if mqtt + gprs are connected and if the hand check as success
+      bool getWaitingForHandCheck(); //Get if we wait for the handcheck answer
+      unsigned long getLastHandCheckRq(); //Get the timestamp of the last handcheck request
+      bool getHandCheckSuccess(); //Get if the handcheck has success
+      void execMqttLoop(); //Run the Mqtt loop (Mandatory to recived mqqt messages)
+      void handCheckHandle(String msg); //Method who handle the handcheck answer
+      void setCallWhenMsg(TRACKER_CALLBACK_SIG); //Method to set the method called when a mqtt message is recived
     private:
       SerialDebug* pUsbDebug;
-      bool isConnected = false;
-      //sParam* psParam;      
-      
+      bool waitingForHandCheck = false;
+      bool handCheckSuccess = false;
+      bool wasInit = false;
+      unsigned long lastHandCheckRq = 0;
+      uint32_t lastReconnectAttempt = 0;
+      TinyGsm* pModem;
+      TinyGsmClient* pClient;
+      PubSubClient*  pMqtt;
+      TRACKER_CALLBACK_SIG;   
+
+      void mqttCallback(char* topic, byte* payload, unsigned int len); //Method called when a mqtt message is recvied
   };
 
 #endif 

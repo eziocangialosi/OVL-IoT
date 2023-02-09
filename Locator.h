@@ -1,8 +1,6 @@
 #ifndef LOCATOR_H
 #define LOCATOR_H
 
-#define DP_POS 4
-
 #include <TinyGPSPlus.h>
 
 #include "SerialDebug.h"
@@ -11,17 +9,23 @@ class Locator
   {
     public:
       Locator(SerialDebug* aUsbDebug);
+      void beg();
       byte watchDog();
       void enterPrtMode();
       bool getPos(float* crntLon, float* crntLat);
       bool getPrtPos(float* aPrtLon, float* aPrtLat);
       void setInterval(unsigned int secs);
+      bool getIsInit();
+      void setSafeZoneDiam(unsigned int aDiam);
+      bool isProtectionEnable();
+      void quitPrtMode();
 
     private:
       float prtLon;
       float prtLat;
       float lastLon;
       float lastLat;
+      bool isInit = false;
       unsigned int safeZoneDiam = 5;
       SerialDebug* pUsbDebug;
       TinyGPSPlus* gps;

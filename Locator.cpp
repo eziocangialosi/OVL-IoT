@@ -2,7 +2,10 @@
 
 Locator::Locator(SerialDebug* aUsbDebug){
   this->pUsbDebug = aUsbDebug;
-  Serial2.begin(9600);
+}
+
+void Locator::beg(){
+  Serial2.begin(GPS_BAUD);
   
   pUsbDebug->wrt("GPS initializing");
   pUsbDebug->wrt_inline("Lib ver:");
@@ -18,9 +21,12 @@ Locator::Locator(SerialDebug* aUsbDebug){
     this->lastPosTime = millis();
     this->interval = 60 * 5; //5min
   }else{
-    pUsbDebug->wrt("GPS FAILED");
+    this->pUsbDebug->wrt("GPS FAILED");
+    this->pUsbDebug->wrt_inline("Only have ");
+    this->pUsbDebug->wrt_inline(String(gps->satellites.isValid()));
+    this->pUsbDebug->wrt(" satellite(s)...");
   }
-  
+  this->isInit = true;
 }
 
 // This custom version of delay() ensures that the gps object
@@ -107,4 +113,23 @@ float Locator::round_float_dp(float in_value, int decimal_place){
   float multiplier = powf( 10.0f, decimal_place );
   in_value = roundf( in_value * multiplier ) / multiplier;
   return in_value;
+}
+
+bool Locator::getIsInit(){
+  return this->isInit;
+}
+
+void Locator::setSafeZoneDiam(unsigned int aDiam){
+  this->safeZoneDiam = aDiam;
+}
+
+bool Locator::isProtectionEnable(){
+  return this->protection_enable;
+}
+
+void Locator::quitPrtMode(){
+  this->rqPos();
+  this->protection_enable = false;
+  this->prtLon = 0;
+  this->prtLat = 0;
 }
