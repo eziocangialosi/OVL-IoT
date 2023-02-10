@@ -22,17 +22,19 @@ class Communicator
       void execMqttLoop(); //Run the Mqtt loop (Mandatory to recived mqqt messages)
       void handCheckHandle(String msg); //Method who handle the handcheck answer
       void setCallWhenMsg(TRACKER_CALLBACK_SIG); //Method to set the method called when a mqtt message is recived
+      unsigned int getBatteryPercent(); //Getter for the battery percentage (according to the GSM module)
+      bool getBatteryInCharge(); // Getter for if the battery is(n't) in charge (according to the GSM module)
     private:
       SerialDebug* pUsbDebug;
-      bool waitingForHandCheck = false;
-      bool handCheckSuccess = false;
-      bool wasInit = false;
+      bool waitingForHandCheck = false; //If we wait for the Hand Check validation
+      bool handCheckSuccess = false; //If the Hand Check as success
+      bool wasInit = false; //If the obj was initialize
       unsigned long lastHandCheckRq = 0;
       uint32_t lastReconnectAttempt = 0;
-      TinyGsm* pModem;
-      TinyGsmClient* pClient;
-      PubSubClient*  pMqtt;
-      TRACKER_CALLBACK_SIG;   
+      TinyGsm* pModem; //Pontor to TinyGsm class (GSM/GPRS Module)
+      TinyGsmClient* pClient; //Pointor to TinyGsmClient class (Interface between MQTT and GSM/GPRS module)
+      PubSubClient*  pMqtt; //Pointor to PubSubClient class (MQTT Client)
+      TRACKER_CALLBACK_SIG; //Callback function stored
 
       void mqttCallback(char* topic, byte* payload, unsigned int len); //Method called when a mqtt message is recvied
   };

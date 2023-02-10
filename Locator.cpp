@@ -54,7 +54,7 @@ void Locator::rqPos(){
   this->lastLon = gps->location.lng();
 }
 
-bool Locator::getPos(float* crntLon, float* crntLat){
+bool Locator::getPos(float* crntLat, float* crntLon){
   if(gps->location.isValid()){
     this->lastPosTime = millis();
     *crntLat = lastLat;
@@ -64,7 +64,7 @@ bool Locator::getPos(float* crntLon, float* crntLat){
   return false;
 }
 
-bool Locator::getPrtPos(float* aPrtLon, float* aPrtLat){
+bool Locator::getPrtPos(float* aPrtLat, float* aPrtLon){
   if(protection_enable){
     this->prtLon = *aPrtLon;
     this->prtLat = *aPrtLat;
@@ -132,4 +132,9 @@ void Locator::quitPrtMode(){
   this->protection_enable = false;
   this->prtLon = 0;
   this->prtLat = 0;
+  this->interval = 5 * 60;
+}
+
+bool Locator::gpsIsFixed(){
+  return this->gps->location.isValid();
 }

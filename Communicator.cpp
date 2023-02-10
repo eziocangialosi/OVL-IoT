@@ -89,7 +89,6 @@ bool Communicator::connectMQTT(){
 }
 
 void Communicator::mqttCallback(char* topic, byte* payload, unsigned int len) {
-  this->pUsbDebug->wrt("Msg arrived");
   String msg = "";
   for(unsigned int i = 0; i < len; i++){
     msg += (char)payload[i];
@@ -145,4 +144,11 @@ bool Communicator::sendMqtt(String aFrame){
 
 void Communicator::setCallWhenMsg(TRACKER_CALLBACK_SIG){
   this->calledWhenMsg = calledWhenMsg;
+}
+
+unsigned int Communicator::getBatteryPercent(){
+  return this->pModem->getBattPercent();
+}
+bool Communicator::getBatteryInCharge(){
+  return this->pModem->getBattChargeState();
 }
