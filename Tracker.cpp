@@ -52,7 +52,7 @@ void Tracker::actionInLoop(){
 void Tracker::beginAlarm(){
   if(!alarm_is_on){
     this->alarm_is_on = true;
-    this->positioning->setInterval(5);
+    this->positioning->setInterval(DEFAULT_INTERVAL_WHEN_ALM);
     this->usbDebug->wrt("Alert ! Tracker outside safe zone !");
     this->cellular->sendMqtt("ALM");
   }

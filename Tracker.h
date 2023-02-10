@@ -21,8 +21,8 @@ class Tracker
       bool alarm_is_on = false; //If the alarm is on/ringing
       bool waitForParam = false; //If we wait for server for parameters
       bool paramSetted = false; //If the parameters are set
-      bool allowChargeOnVehicle = false; //If the user allow Charge on the vehicle battery
-      bool eco_mode = false; //If the eco mode is activated
+      bool allowChargeOnVehicle = DEFAULT_VEH_CHG_STS; //If the user allow Charge on the vehicle battery
+      bool eco_mode = DEFAULT_ECO_MODE_STS; //If the eco mode is activated
 
       bool prt_as_been_rq = false; //If the protection mode as been requested by Srv
     

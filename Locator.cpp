@@ -19,7 +19,7 @@ void Locator::beg(){
   if(this->waitGPSFix(60)){
     pUsbDebug->wrt("GPS OK");
     this->lastPosTime = millis();
-    this->interval = 60 * 5; //5min
+    this->interval = DEFAULT_INTERVAL; //5min
   }else{
     this->pUsbDebug->wrt("GPS FAILED");
     this->pUsbDebug->wrt_inline("Only have ");
@@ -132,7 +132,7 @@ void Locator::quitPrtMode(){
   this->protection_enable = false;
   this->prtLon = 0;
   this->prtLat = 0;
-  this->interval = 5 * 60;
+  this->interval = DEFAULT_INTERVAL;
 }
 
 bool Locator::gpsIsFixed(){

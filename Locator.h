@@ -27,7 +27,7 @@ class Locator
       float lastLon; //Last recvied position (Lon)
       float lastLat; //same (Lat)
       bool isInit = false; //If the object is intialize or not
-      unsigned int safeZoneDiam = 5; //Safe zone diameter
+      unsigned int safeZoneDiam = DEFAULT_SAFE_ZONE_DIAM; //Safe zone diameter
       SerialDebug* pUsbDebug; //Pointor to serial debug obj
       TinyGPSPlus* gps; //Pointor to GPS obj (GPS Module)
       unsigned int interval; //Interval between 2 position refresh
