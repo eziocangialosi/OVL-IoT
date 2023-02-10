@@ -36,7 +36,7 @@ const char GPRS_PSWD[] = ""; //Your gprs password (if needed)
 
 /*******************************************/
 // MQTT details
-#define MQTT_PORT 6868 //Broker port
+#define MQTT_PORT 1883 //Broker port
 const char BROKER[]    = "example.com"; //Broker URL or IP addr
 const char TOPIC_RX[]  = "<iot_id>RX"; //Rx Topic used for this tracker
 const char TOPIC_TX[]  = "<iot_id>TX"; //Tx Topic used for this tracker
