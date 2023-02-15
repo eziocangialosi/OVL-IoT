@@ -1,9 +1,9 @@
-//TX1 = 4 , TX2 = 17
-//RX1 = 12, RX2 = 16
+//TX1 = 25 , TX2 = 17
+//RX1 = 26, RX2 = 16
 //ATTENTION --> TX1 et RX1 modifiés dans la lib "HardwareSerial"
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   Serial.println("Serial USB ok");
 
