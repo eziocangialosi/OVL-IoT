@@ -96,6 +96,22 @@ void Tracker::whenMqttRx(String payload){
       this->cellular->sendMqtt("ERR");
       this->usbDebug->wrt("Cannot edit protection mode");
     }
+  }else if(payload == "SFZ-RQ"){
+    this->usbDebug->wrt("Server Request for safe zone position");
+    float sfzLat;
+    float sfzLon;
+    String msg;
+    if(this->positioning->getPrtPos(&sfzLat, &sfzLon)){
+      msg = "SFZ=";
+      msg += String(sfzLat,10);
+      msg += ",";
+      msg += String(sfzLon,10);
+      this->usbDebug->wrt("SafeZone position sended");
+    }else{
+      this->usbDebug->wrt("Cannot send safezone position");
+      msg = "ERR";
+    }
+    this->cellular->sendMqtt(msg);
   }else{
     this->cellular->sendMqtt("ERR");
     this->usbDebug->wrt("Message interpretation failed");

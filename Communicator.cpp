@@ -20,20 +20,19 @@ Communicator::Communicator(SerialDebug* apSerialDebug){
   if (GSM_PIN && this->pModem->getSimStatus() != 3) {
     if(this->pModem->simUnlock(GSM_PIN)){
       this->pUsbDebug->wrt("Sim unlocked");
-      this->pUsbDebug->wrt_inline("Waiting for network...");
-      if (!this->pModem->waitForNetwork()) {
-            this->pUsbDebug->wrt(" fail");
-            delay(10000);
-            return;
-      }
-      this->pUsbDebug->wrt(" success");
-      if (this->pModem->isNetworkConnected()) { this->pUsbDebug->wrt("Network connected"); }
-
     }else{
       this->pUsbDebug->wrt("Fatal err: Unlocking failed");
       return;
     }
   }
+  this->pUsbDebug->wrt_inline("Waiting for network...");
+  if (!this->pModem->waitForNetwork()) {
+        this->pUsbDebug->wrt(" fail");
+        delay(10000);
+        return;
+  }
+  this->pUsbDebug->wrt(" success");
+  if (this->pModem->isNetworkConnected()) { this->pUsbDebug->wrt("Network connected"); }
 }
 
 bool Communicator::connectGPRS(){

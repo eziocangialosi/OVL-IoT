@@ -66,8 +66,8 @@ bool Locator::getPos(float* crntLat, float* crntLon){
 
 bool Locator::getPrtPos(float* aPrtLat, float* aPrtLon){
   if(protection_enable){
-    this->prtLon = *aPrtLon;
-    this->prtLat = *aPrtLat;
+    *aPrtLat = this->prtLat;
+    *aPrtLon = this->prtLon;
     return true;
   }
   return false;
