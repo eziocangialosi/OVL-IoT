@@ -28,9 +28,8 @@
 // #define TINY_GSM_MODEM_XBEE
 // #define TINY_GSM_MODEM_SEQUANS_MONARCH
 
-//#define SIM_NEED_PIN true
-#define GSM_PIN "0000" //SIM card pin
-const char APN[]      = "sl2sfr"; //URL of your phone operator apn
+#define GSM_PIN "" //SIM card pin
+const char APN[]      = "example.com"; //URL of your phone operator apn
 const char GPRS_USER[] = ""; //Your gprs user (if needed)
 const char GPRS_PSWD[] = ""; //Your gprs password (if needed)
 
@@ -38,9 +37,9 @@ const char GPRS_PSWD[] = ""; //Your gprs password (if needed)
 /*******************************************/
 // MQTT details
 #define MQTT_PORT 6868 //Broker port
-const char BROKER[]    = "ovl.tech-user.fr"; //Broker URL or IP addr
-const char TOPIC_RX[]  = "topicRX_3"; //Rx Topic used for this tracker
-const char TOPIC_TX[]  = "topicTX_3"; //Tx Topic used for this tracker
+const char BROKER[]    = "example.com"; //Broker URL or IP addr
+const char TOPIC_RX[]  = "<iot_id>RX"; //Rx Topic used for this tracker
+const char TOPIC_TX[]  = "<iot_id>TX"; //Tx Topic used for this tracker
 const char MQTT_USER[] = "mqtt_user"; //Mqtt user for this tracker
 const char MQTT_PSWD[] = "mqtt_pass"; //Mqtt password for this tracker
 
