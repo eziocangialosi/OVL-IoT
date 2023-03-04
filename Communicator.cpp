@@ -151,3 +151,14 @@ unsigned int Communicator::getBatteryPercent(){
 bool Communicator::getBatteryInCharge(){
   return this->pModem->getBattChargeState();
 }
+
+void Communicator::autoReconnect(){
+  if(!this->pModem->isGprsConnected()){
+    this->pUsbDebug->wrt("Celluar connection lost, trying to reconnect...");
+    this->connectGPRS();
+  }
+  if(!this->pMqtt->connected()){
+    this->pUsbDebug->wrt("Connection with broker lost, trying to reconnect...");
+    this->connectMQTT();
+  }
+}

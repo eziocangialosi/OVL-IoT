@@ -19,8 +19,7 @@ void Tracker::actionInLoop(){
   this->cellular->execMqttLoop();
 
   if(!this->cellular->getIsConnected() && !this->cellular->getWaitingForHandCheck()){
-    this->usbDebug->wrt("Connection with broker lost, trying to reconnect...");
-    this->cellular->connectMQTT();
+    this->cellular->autoReconnect();
   }
   
   if(!this->cellular->getWaitingForHandCheck() && this->cellular->getLastHandCheckRq() + 5000 < millis()
