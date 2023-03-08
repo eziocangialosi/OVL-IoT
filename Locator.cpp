@@ -78,8 +78,7 @@ byte Locator::watchDog(){
   acquire_nmea_while_ms(1000);
   if(gps->location.isValid()){
     //if the position has changed or date more than 5 min
-    if((this->round_float_dp(lastLat,DP_POS) != this->round_float_dp(gps->location.lat(),DP_POS) ||
-    this->round_float_dp(lastLon,DP_POS) != this->round_float_dp(gps->location.lng(),DP_POS)) ||
+    if((TinyGPSPlus::distanceBetween(lastLat,lastLon,gps->location.lat(),gps->location.lng()) >= DISTANCE_TRIG) ||
     (millis() - this->lastPosTime > this->interval * 1000))
     {
       this->rqPos();

@@ -48,14 +48,14 @@ const char MQTT_PSWD[] = "mqtt_pass"; //Mqtt password for this tracker
 /*******************************************/
 // GPS config
 #define GPS_BAUD 9600 //Serial baud used for gps module
-#define DP_POS 3 //Number of digits used to compare 2 positions, defaut 3
+#define DISTANCE_TRIG 3 //Distance from which we define that the position has changed, defaut 3 meters
 
 
 /*******************************************/
 //Tracker misc params
 #define DEFAULT_VEH_CHG_STS false //If the tracker can charge on vehicle battery by default
 #define DEFAULT_ECO_MODE_STS false //If the tracker should be in ecomode by default
-#define DEFAULT_SAFE_ZONE_DIAM 5 //Default diameter of the SafeZone, default 5
+#define DEFAULT_SAFE_ZONE_DIAM 15 //Default diameter of the SafeZone, default 15
 #define DEFAULT_INTERVAL (5*60) //Default interval between 2 position refresh, default 5min
 #define DEFAULT_INTERVAL_WHEN_ALM 5 //Default interval between 2 position refresh when alarm is on, default 5sec
 
