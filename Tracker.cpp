@@ -8,10 +8,10 @@ void Tracker::beg(){
   this->positioning = new Locator(usbDebug);
   if(this->cellular->connectGPRS()){
     if(!this->cellular->connectMQTT()){
-      return;
+      //return;
     }
   }else{
-    return;
+    //return;
   }
 }
 

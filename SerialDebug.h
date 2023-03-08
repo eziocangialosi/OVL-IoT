@@ -4,8 +4,8 @@
 #include "Arduino.h"
 #include "config.h"
 
-#define MSG_BORDER  "=================================="
-#define VERSION_MSG "OpenVehiculeLocator ProofOfConcept"
+#define MSG_BORDER  "============================================="
+#define VERSION_MSG "OpenVehiculeLocator Pre-Developpement version"
 
 class SerialDebug
   {
