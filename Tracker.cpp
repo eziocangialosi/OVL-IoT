@@ -2,6 +2,7 @@
 
 void Tracker::beg(){
   this->usbDebug = new SerialDebug(USB_BAUD);
+  this->lightSign = new LedIndicator(LED_PIN);
   this->cellular = new Communicator(usbDebug);
   using std::placeholders::_1;
   this->cellular->setCallWhenMsg(std::bind(&Tracker::whenMqttRx,this,_1));

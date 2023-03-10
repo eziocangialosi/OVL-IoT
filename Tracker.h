@@ -4,6 +4,7 @@
 #include "SerialDebug.h"
 #include "Locator.h"
 #include "Communicator.h"
+#include "LedIndicator.h"
 
 class Tracker
   {
@@ -29,6 +30,7 @@ class Tracker
       Communicator* cellular; //Pointor to Communicator instance (Srv communication)
       SerialDebug* usbDebug; //Pointor to SeriaDebug instance (Debug msg on usb port)
       Locator* positioning; //Pointor to Locator instance (GPS communication, acquire and parse)
+      LedIndicator* lightSign;
   };
 
 
