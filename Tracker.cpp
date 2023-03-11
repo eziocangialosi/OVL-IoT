@@ -3,10 +3,10 @@
 void Tracker::beg(){
   this->usbDebug = new SerialDebug(USB_BAUD);
   this->lightSign = new LedIndicator(LED_PIN);
-  this->cellular = new Communicator(usbDebug);
+  this->cellular = new Communicator(usbDebug, lightSign);
   using std::placeholders::_1;
   this->cellular->setCallWhenMsg(std::bind(&Tracker::whenMqttRx,this,_1));
-  this->positioning = new Locator(usbDebug);
+  this->positioning = new Locator(usbDebug, lightSign);
   if(this->cellular->connectGPRS()){
     if(!this->cellular->connectMQTT()){
       //return;
@@ -18,6 +18,7 @@ void Tracker::beg(){
 
 void Tracker::actionInLoop(){
   this->cellular->execMqttLoop();
+  this->lightSign->ledLoop();
 
   if(!this->cellular->getIsConnected() && !this->cellular->getWaitingForHandCheck()){
     this->cellular->autoReconnect();
@@ -59,6 +60,7 @@ void Tracker::beginAlarm(){
 }
 
 void Tracker::whenMqttRx(String payload){
+  this->lightSign->blink(CRGB::Green);
   if(payload == "PING"){
     this->usbDebug->wrt("Recived ping"); 
     this->cellular->sendMqtt("PONG");

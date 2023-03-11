@@ -1,7 +1,8 @@
 #include "Locator.h"
 
-Locator::Locator(SerialDebug* aUsbDebug){
+Locator::Locator(SerialDebug* aUsbDebug, LedIndicator* apLightSign){
   this->pUsbDebug = aUsbDebug;
+  this->pLightSign = apLightSign;
 }
 
 void Locator::beg(){
@@ -25,6 +26,7 @@ void Locator::beg(){
     this->pUsbDebug->wrt_inline("Only have ");
     this->pUsbDebug->wrt_inline(String(gps->satellites.isValid()));
     this->pUsbDebug->wrt(" satellite(s)...");
+    this->pLightSign->blinkInfty(CRGB::Blue);
   }
   this->isInit = true;
 }
@@ -77,13 +79,16 @@ byte Locator::watchDog(){
   byte rtn_byte = 0;
   acquire_nmea_while_ms(1000);
   if(gps->location.isValid()){
+    if(this->pLightSign->isBlinking()){
+      this->pLightSign->stopBlinking();
+    }
     //if the position has changed or date more than 5 min
     if((TinyGPSPlus::distanceBetween(lastLat,lastLon,gps->location.lat(),gps->location.lng()) >= DISTANCE_TRIG) ||
     (millis() - this->lastPosTime > this->interval * 1000))
     {
       this->rqPos();
       if(protection_enable){
-        if(TinyGPSPlus::distanceBetween(lastLat,lastLon,prtLat,prtLon) > this->safeZoneDiam){
+        if(TinyGPSPlus::distanceBetween(lastLat,lastLon,prtLat,prtLon) > (this->safeZoneDiam / 2)){
           rtn_byte += 2;
           this->pUsbDebug->wrt_inline("Distance with safeZone center : ");
           this->pUsbDebug->wrt_inline(String(TinyGPSPlus::distanceBetween(lastLat,lastLon,prtLat,prtLon)));
@@ -93,6 +98,8 @@ byte Locator::watchDog(){
       rtn_byte += 1;
     }
 
+  }else if(!this->pLightSign->isBlinking()){
+    this->pLightSign->blinkInfty(CRGB::Blue);
   }
   return rtn_byte;
 }

@@ -4,11 +4,12 @@
 #include <TinyGPSPlus.h>
 
 #include "SerialDebug.h"
+#include "LedIndicator.h"
 
 class Locator
   {
     public:
-      Locator(SerialDebug* aUsbDebug); //Constructor, pointor to serial debug class needed to send debug info
+      Locator(SerialDebug* aUsbDebug, LedIndicator* apLightSign); //Constructor, pointor to serial debug class needed to send debug info
       void beg(); //Intialization method
       byte watchDog(); //Method who check if the gps position has changed
       void enterPrtMode(); //Method to enter in protection mode
@@ -30,6 +31,7 @@ class Locator
       unsigned int safeZoneDiam = DEFAULT_SAFE_ZONE_DIAM; //Safe zone diameter
       SerialDebug* pUsbDebug; //Pointor to serial debug obj
       TinyGPSPlus* gps; //Pointor to GPS obj (GPS Module)
+      LedIndicator* pLightSign; //Pointor to led debug obj
       unsigned int interval; //Interval between 2 position refresh
       unsigned long lastPosTime; //"Timestamp" of the last position refresh
       bool protection_enable = false; //If the proection is enable

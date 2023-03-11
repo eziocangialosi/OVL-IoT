@@ -4,7 +4,6 @@
 #include "SerialDebug.h"
 #include "Locator.h"
 #include "Communicator.h"
-#include "LedIndicator.h"
 
 class Tracker
   {

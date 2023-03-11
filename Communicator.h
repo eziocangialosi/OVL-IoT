@@ -4,6 +4,7 @@
 #define TRACKER_CALLBACK_SIG std::function<void(String)> calledWhenMsg
 
 #include "SerialDebug.h"
+#include "LedIndicator.h"
 
 #include <PubSubClient.h>
 #include <TinyGsmClient.h>
@@ -11,7 +12,8 @@
 class Communicator
   {
     public:
-      Communicator(SerialDebug* apSerialDebug); //Constructor, pointor to serial debug class needed to send debug info
+      //Constructor, pointor to serial debug class needed to send debug info, pointor to led sign needed to debug via led codes
+      Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign);
       bool connectGPRS(); //Connect GPRS
       bool connectMQTT(); //(Re)connect MQTT
       bool sendMqtt(String aFrame); //Send an MQTT message on the TX topic
@@ -35,6 +37,7 @@ class Communicator
       TinyGsm* pModem; //Pontor to TinyGsm class (GSM/GPRS Module)
       TinyGsmClient* pClient; //Pointor to TinyGsmClient class (Interface between MQTT and GSM/GPRS module)
       PubSubClient*  pMqtt; //Pointor to PubSubClient class (MQTT Client)
+      LedIndicator* pLightSign; //Pointor to led debug obj
       TRACKER_CALLBACK_SIG; //Callback function stored
 
       void mqttCallback(char* topic, byte* payload, unsigned int len); //Method called when a mqtt message is recvied

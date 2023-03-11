@@ -1,7 +1,8 @@
 #include "Communicator.h"
 
-Communicator::Communicator(SerialDebug* apSerialDebug){
+Communicator::Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign){
   this->pUsbDebug = apSerialDebug;
+  this->pLightSign = apLightSign;
   this->pUsbDebug->wrt("GPRS initializing...");
   this->pModem = new TinyGsm(Serial1);
   this->pClient = new TinyGsmClient(*pModem);
@@ -22,7 +23,7 @@ Communicator::Communicator(SerialDebug* apSerialDebug){
       this->pUsbDebug->wrt("Sim unlocked");
     }else{
       this->pUsbDebug->wrt("Fatal err: Unlocking failed");
-      return;
+      this->pLightSign->setTo(CRGB::Red);
     }
   }
   this->pUsbDebug->wrt_inline("Waiting for network...");
