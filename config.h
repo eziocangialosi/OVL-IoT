@@ -28,7 +28,6 @@
 // #define TINY_GSM_MODEM_XBEE
 // #define TINY_GSM_MODEM_SEQUANS_MONARCH
 
-//#define SIM_NEED_PIN true
 #define GSM_PIN "" //SIM card pin
 const char APN[]      = "example.com"; //URL of your phone operator apn
 const char GPRS_USER[] = ""; //Your gprs user (if needed)
@@ -37,7 +36,7 @@ const char GPRS_PSWD[] = ""; //Your gprs password (if needed)
 
 /*******************************************/
 // MQTT details
-#define MQTT_PORT 6868 //Broker port
+#define MQTT_PORT 1883 //Broker port
 const char BROKER[]    = "example.com"; //Broker URL or IP addr
 const char TOPIC_RX[]  = "topicRX"; //Rx Topic used for this tracker
 const char TOPIC_TX[]  = "topicTX"; //Tx Topic used for this tracker
