@@ -1,6 +1,6 @@
 #include "LedIndicator.h"
 
-LedIndicator::LedIndicator(uint8_t ledPin){
+LedIndicator::LedIndicator(){
   FastLED.addLeds<NEOPIXEL, PIN>(&this->led, NUM_LEDS);
   this->setToBlack();
   this->setTo(CRGB::Orange);
@@ -10,9 +10,6 @@ void LedIndicator::ledLoop(){
   if(this->waitForBlack){
     this->setToBlack();
     this->waitForBlack = false;
-    if(this->blinkNonStop){
-      this->lastBlink = millis();
-    }
   }else if(this->blinkNonStop){
     this->setTo(this->blinkColor);
     this->waitForBlack = true;
@@ -24,6 +21,8 @@ void LedIndicator::setToBlack(){
 }
 
 void LedIndicator::setTo(const CRGB aColor){
+  this->waitForBlack = false;
+  this->blinkNonStop = false;
   this->led = aColor;
   FastLED.show();
   delay(1);
@@ -49,4 +48,10 @@ void LedIndicator::stopBlinking(){
 
 bool LedIndicator::isBlinking(){
   return this->blinkNonStop;
+}
+
+void LedIndicator::killLoop(){
+  while(1){
+    this->ledLoop();
+  }
 }

@@ -9,7 +9,7 @@
 class LedIndicator
   {
     public:
-      LedIndicator(uint8_t ledPin);
+      LedIndicator();
       void setToBlack();
       void blink(const CRGB aColor);
       void blinkInfty(const CRGB aColor);
@@ -17,6 +17,7 @@ class LedIndicator
       void ledLoop();
       void setTo(const CRGB aColor);
       bool isBlinking();
+      void killLoop(); //Infinite loop called when a fatal error occured
     private:
       CRGB led;
       bool waitForBlack = false;

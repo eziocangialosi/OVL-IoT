@@ -61,6 +61,5 @@ const char MQTT_PSWD[] = "mqtt_pass"; //Mqtt password for this tracker
 /*******************************************/
 //Debug config
 #define USB_BAUD 115200 //Serial baud used to communicate with debug console
-#define LED_PIN 5 //Pin for the rgb led
 
 #endif

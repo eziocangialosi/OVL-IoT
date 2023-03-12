@@ -17,13 +17,15 @@ Communicator::Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign
   this->pUsbDebug->wrt("Modem Name: ");
   this->pUsbDebug->wrt(modemName);
 
-  this->pUsbDebug->wrt("Unlocking sim...");
+  this->pUsbDebug->wrt_inline("Unlocking sim...");
   if (GSM_PIN && this->pModem->getSimStatus() != 3) {
     if(this->pModem->simUnlock(GSM_PIN)){
-      this->pUsbDebug->wrt("Sim unlocked");
+      this->pUsbDebug->wrt(" success");
     }else{
+      this->pUsbDebug->wrt("");
       this->pUsbDebug->wrt("Fatal err: Unlocking failed");
       this->pLightSign->setTo(CRGB::Red);
+      this->pLightSign->killLoop();
     }
   }
   this->pUsbDebug->wrt_inline("Waiting for network...");
@@ -39,6 +41,7 @@ Communicator::Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign
 bool Communicator::connectGPRS(){
   this->pUsbDebug->wrt_inline("Connecting to ");
   this->pUsbDebug->wrt_inline(String(APN));
+  this->pUsbDebug->wrt_inline("...");
   if (!this->pModem->gprsConnect(APN, GPRS_USER, GPRS_PSWD)) {
     this->pUsbDebug->wrt(" fail");
     delay(10000);
@@ -67,21 +70,20 @@ bool Communicator::connectMQTT(){
       this->wasInit = true;
     }
     
-    this->pUsbDebug->wrt_inline("Connecting to broker : ");
+    this->pUsbDebug->wrt_inline("Connecting to broker");
     this->pUsbDebug->wrt_inline(BROKER);
-    this->pUsbDebug->wrt_inline(" ");
+    this->pUsbDebug->wrt_inline("...");
     
     if(this->pMqtt->connect("IoT")){
-      this->pUsbDebug->wrt("success !");
+      this->pUsbDebug->wrt(" success");
       this->pUsbDebug->wrt("Try HandCheck...");
       this->waitingForHandCheck = true;
       this->pMqtt->subscribe(TOPIC_RX);
-      this->lastHandCheckRq = millis();
-      this->pMqtt->publish(TOPIC_TX, "SYN");
+      this->tryHandCheck();
       this->pMqtt->loop();
       return true;
     }else{
-      this->pUsbDebug->wrt("failed");
+      this->pUsbDebug->wrt(" fail");
       return false;
     }
   }
@@ -162,4 +164,9 @@ void Communicator::autoReconnect(){
     this->pUsbDebug->wrt("Connection with broker lost, trying to reconnect...");
     this->connectMQTT();
   }
+}
+
+void Communicator::tryHandCheck(){
+  this->lastHandCheckRq = millis();
+  this->pMqtt->publish(TOPIC_TX, "SYN");
 }

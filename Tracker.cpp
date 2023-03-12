@@ -2,7 +2,7 @@
 
 void Tracker::beg(){
   this->usbDebug = new SerialDebug(USB_BAUD);
-  this->lightSign = new LedIndicator(LED_PIN);
+  this->lightSign = new LedIndicator();
   this->cellular = new Communicator(usbDebug, lightSign);
   using std::placeholders::_1;
   this->cellular->setCallWhenMsg(std::bind(&Tracker::whenMqttRx,this,_1));
@@ -24,8 +24,8 @@ void Tracker::actionInLoop(){
     this->cellular->autoReconnect();
   }
   
-  if(!this->cellular->getWaitingForHandCheck() && this->cellular->getLastHandCheckRq() + 5000 < millis()
-  && this->cellular->getHandCheckSuccess() && this->positioning->getIsInit() && this->paramSetted){
+  if(!this->cellular->getWaitingForHandCheck() && this->cellular->getHandCheckSuccess()
+  && this->positioning->getIsInit() && this->paramSetted){
     byte pos_value = this->positioning->watchDog();
     if(pos_value & 0x02){
       this->beginAlarm();
@@ -37,14 +37,21 @@ void Tracker::actionInLoop(){
       this->positioning->getPos(&getLat, &getLon);
       this->sendPos(getLat, getLon);
     } 
-  }else if(this->cellular->getHandCheckSuccess() && !this->cellular->getWaitingForHandCheck() && !this->positioning->getIsInit()){
+  }else if(this->cellular->getHandCheckSuccess() && !this->cellular->getWaitingForHandCheck()
+           && !this->positioning->getIsInit() && this->paramSetted){
     this->positioning->beg();
   }else if(!this->cellular->getHandCheckSuccess() && this->cellular->getWaitingForHandCheck() && this->cellular->getLastHandCheckRq() + 5000 > millis()){
     delay(1);
-  }else if(!this->paramSetted && !this->waitForParam){
+  }else if(!this->paramSetted && !this->waitForParam && this->cellular->getHandCheckSuccess()){
     this->waitForParam = true;
+    this->lightSign->setTo(CRGB::Orange);
     this->usbDebug->wrt("Requesting Param...");
     this->cellular->sendMqtt("STG-RQ");
+  }else if(this->cellular->getWaitingForHandCheck() && this->cellular->getLastHandCheckRq() + 5000 < millis()
+           && !this->cellular->getHandCheckSuccess()){
+    this->lightSign->blink(CRGB::Red);
+    this->usbDebug->wrt("Retry to HandCheck...");
+    this->cellular->tryHandCheck();
   }
 
   this->prt_as_been_rq = false;

@@ -26,7 +26,8 @@ class Communicator
       void setCallWhenMsg(TRACKER_CALLBACK_SIG); //Method to set the method called when a mqtt message is recived
       unsigned int getBatteryPercent(); //Getter for the battery percentage (according to the GSM module)
       bool getBatteryInCharge(); // Getter for if the battery is(n't) in charge (according to the GSM module)
-      void autoReconnect();
+      void autoReconnect(); //Try to restore the connection (GPRS & MQTT)
+      void tryHandCheck(); //Try to hand check with server
     private:
       SerialDebug* pUsbDebug;
       bool waitingForHandCheck = false; //If we wait for the Hand Check validation
