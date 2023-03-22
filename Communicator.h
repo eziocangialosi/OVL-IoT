@@ -14,7 +14,8 @@ class Communicator
     public:
       //Constructor, pointor to serial debug class needed to send debug info, pointor to led sign needed to debug via led codes
       Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign);
-      bool connectGPRS(); //Connect GPRS
+      bool unlockSIM(); //(Re)unlock sim card
+      bool connectGPRS(); //(Re)connect GPRS
       bool connectMQTT(); //(Re)connect MQTT
       bool sendMqtt(String aFrame); //Send an MQTT message on the TX topic
       bool getIsConnected(); //Get if mqtt + gprs are connected and if the hand check as success
@@ -28,6 +29,8 @@ class Communicator
       bool getBatteryInCharge(); // Getter for if the battery is(n't) in charge (according to the GSM module)
       void autoReconnect(); //Try to restore the connection (GPRS & MQTT)
       void tryHandCheck(); //Try to hand check with server
+      bool getSimLocked();
+      bool connectNetwork();
     private:
       SerialDebug* pUsbDebug;
       bool waitingForHandCheck = false; //If we wait for the Hand Check validation

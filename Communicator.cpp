@@ -17,25 +17,24 @@ Communicator::Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign
   this->pUsbDebug->wrt("Modem Name: ");
   this->pUsbDebug->wrt(modemName);
 
-  this->pUsbDebug->wrt_inline("Unlocking sim...");
-  if (GSM_PIN && this->pModem->getSimStatus() != 3) {
-    if(this->pModem->simUnlock(GSM_PIN)){
+  if (this->getSimLocked()) {
+    this->pUsbDebug->wrt_inline("Unlocking sim...");
+    this->unlockSIM();
+  }
+  this->connectNetwork();
+}
+
+bool Communicator::unlockSIM(){
+  if(this->pModem->simUnlock(GSM_PIN)){
       this->pUsbDebug->wrt(" success");
+      return true;
     }else{
       this->pUsbDebug->wrt("");
       this->pUsbDebug->wrt("Fatal err: Unlocking failed");
       this->pLightSign->setTo(CRGB::Red);
       this->pLightSign->killLoop();
     }
-  }
-  this->pUsbDebug->wrt_inline("Waiting for network...");
-  if (!this->pModem->waitForNetwork()) {
-        this->pUsbDebug->wrt(" fail");
-        delay(10000);
-        return;
-  }
-  this->pUsbDebug->wrt(" success");
-  if (this->pModem->isNetworkConnected()) { this->pUsbDebug->wrt("Network connected"); }
+    return false;
 }
 
 bool Communicator::connectGPRS(){
@@ -70,11 +69,11 @@ bool Communicator::connectMQTT(){
       this->wasInit = true;
     }
     
-    this->pUsbDebug->wrt_inline("Connecting to broker");
+    this->pUsbDebug->wrt_inline("Connecting to broker ");
     this->pUsbDebug->wrt_inline(BROKER);
     this->pUsbDebug->wrt_inline("...");
     
-    if(this->pMqtt->connect("IoT")){
+    if(this->pMqtt->connect(MQTT_USER, MQTT_USER, MQTT_PSWD)){
       this->pUsbDebug->wrt(" success");
       this->pUsbDebug->wrt("Try HandCheck...");
       this->waitingForHandCheck = true;
@@ -156,6 +155,12 @@ bool Communicator::getBatteryInCharge(){
 }
 
 void Communicator::autoReconnect(){
+  /*if (this->getSimLocked()) {
+    this->pUsbDebug->wrt_inline("Sim is locked, trying to unlock ");
+    this->unlockSIM();
+  }
+  this->connectNetwork();*/
+  
   if(!this->pModem->isGprsConnected()){
     this->pUsbDebug->wrt("Celluar connection lost, trying to reconnect...");
     this->connectGPRS();
@@ -169,4 +174,23 @@ void Communicator::autoReconnect(){
 void Communicator::tryHandCheck(){
   this->lastHandCheckRq = millis();
   this->pMqtt->publish(TOPIC_TX, "SYN");
+}
+
+bool Communicator::getSimLocked(){
+  return ((GSM_PIN) && (this->pModem->getSimStatus() != 3));
+}
+
+bool Communicator::connectNetwork(){
+  this->pUsbDebug->wrt_inline("Waiting for network...");
+  if (!this->pModem->waitForNetwork()) {
+    this->pUsbDebug->wrt(" fail");
+    delay(10000);
+    return false;
+  }
+  this->pUsbDebug->wrt(" success");
+  if (this->pModem->isNetworkConnected()) {
+    this->pUsbDebug->wrt("Network connected");
+    return true;
+  }
+  return false;
 }

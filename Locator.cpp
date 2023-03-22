@@ -105,10 +105,12 @@ byte Locator::watchDog(){
 }
 
 void Locator::enterPrtMode(){
-  this->rqPos();
-  this->protection_enable = true;
-  this->prtLon = this->lastLon;
-  this->prtLat = this->lastLat;
+  if(this->isInit){
+    this->rqPos();
+    this->protection_enable = true;
+    this->prtLon = this->lastLon;
+    this->prtLat = this->lastLat;
+  } 
 }
 
 void Locator::setInterval(unsigned int secs){

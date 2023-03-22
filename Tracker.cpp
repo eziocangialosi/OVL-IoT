@@ -1,6 +1,8 @@
 #include "Tracker.h"
 
 void Tracker::beg(){
+  pinMode(VEH_ALIM_SENSOR_PIN, INPUT);
+  pinMode(VEH_ALIM_RELAY_PIN, OUTPUT);
   this->usbDebug = new SerialDebug(USB_BAUD);
   this->lightSign = new LedIndicator();
   this->cellular = new Communicator(usbDebug, lightSign);
@@ -19,6 +21,7 @@ void Tracker::beg(){
 void Tracker::actionInLoop(){
   this->cellular->execMqttLoop();
   this->lightSign->ledLoop();
+  this->veh_charge_manager();
 
   if(!this->cellular->getIsConnected() && !this->cellular->getWaitingForHandCheck()){
     this->cellular->autoReconnect();
@@ -140,8 +143,18 @@ void Tracker::sendPos(float aLat, float aLon){
 }
 
 void Tracker::parseParamFrame(String payload){
-  this->allowChargeOnVehicle = (payload.charAt(4) == '1');
-  this->eco_mode = (payload.charAt(6) == '1');
+  if(payload.charAt(4) == '1'){
+    this->allowChargeOnVehicle = true;
+  }else{
+    this->allowChargeOnVehicle = false;
+  }
+  
+  if(payload.charAt(6) == '1'){
+    this->eco_mode = true;
+  }else{
+    this->eco_mode = false;
+  }
+  
   if(payload.charAt(8) == '1' && !this->positioning->isProtectionEnable()){
     this->positioning->enterPrtMode();
   }else if(payload.charAt(8) == '0' && this->positioning->isProtectionEnable()){
@@ -175,5 +188,27 @@ void Tracker::sendSts(){
   rq += String(this->positioning->gpsIsFixed());
   if(!this->cellular->sendMqtt(rq)){
     this->usbDebug->wrt("Error when trying to send status to srv");
+  }
+}
+
+void Tracker::veh_charge_manager(){
+  if(allowChargeOnVehicle){
+    if(old_veh_alim_state != digitalRead(VEH_ALIM_SENSOR_PIN)){
+      old_veh_alim_state = digitalRead(VEH_ALIM_SENSOR_PIN);
+      if(old_veh_alim_state == HIGH){
+        this->usbDebug->wrt("Detection of power from vehicle");
+        veh_alim_time = millis();
+      }else{
+        digitalWrite(VEH_ALIM_RELAY_PIN, LOW);
+      }
+    }if((veh_alim_time + (DELAY_CHG_VEH*1000)) < millis()){
+      if(old_veh_alim_state == HIGH && !isOnCharge){
+        this->usbDebug->wrt("Begin charge on vehicle battery");
+        digitalWrite(VEH_ALIM_RELAY_PIN, HIGH);
+      }else if(old_veh_alim_state == LOW && isOnCharge){
+        this->usbDebug->wrt("Lost power from vehicle battery");
+        digitalWrite(VEH_ALIM_RELAY_PIN, LOW);
+      }
+    }
   }
 }
