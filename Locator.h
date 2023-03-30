@@ -16,6 +16,7 @@ class Locator
       bool getPos(float* crntLat, float* crntLon); //Getter for the current position (Lat, Lon), return 1 if success, 0 if error
       bool getPrtPos(float* aPrtLat, float* aPrtLon); //Getter for the protection position 
       void setInterval(unsigned int secs); //Setter for the maximum interval between 2 position refresh
+      void setMinimalInterval(unsigned int secs); //Setter for the minimal interval between 2 position refresh
       bool getIsInit(); //Getter for the is init flag
       void setSafeZoneDiam(unsigned int aDiam); //Setter for the safe zone diameter (diameter in meters)
       bool isProtectionEnable(); //Getter, true if the protecion is enabled false if isn't
@@ -32,7 +33,8 @@ class Locator
       SerialDebug* pUsbDebug; //Pointor to serial debug obj
       TinyGPSPlus* gps; //Pointor to GPS obj (GPS Module)
       LedIndicator* pLightSign; //Pointor to led debug obj
-      unsigned int interval; //Interval between 2 position refresh
+      unsigned int interval; //Max interval between 2 position refresh
+      unsigned int min_interval; //Minimal interval between 2 position refresh
       unsigned long lastPosTime; //"Timestamp" of the last position refresh
       bool protection_enable = false; //If the proection is enable
       

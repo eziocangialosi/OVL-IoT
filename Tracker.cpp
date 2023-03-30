@@ -64,6 +64,7 @@ void Tracker::beginAlarm(){
   if(!alarm_is_on){
     this->alarm_is_on = true;
     this->positioning->setInterval(DEFAULT_INTERVAL_WHEN_ALM);
+    this->positioning->setMinimalInterval(DEFAULT_INTERVAL_WHEN_ALM);
     this->usbDebug->wrt("Alert ! Tracker outside safe zone !");
     this->cellular->sendMqtt("ALM");
   }
@@ -147,6 +148,7 @@ void Tracker::parseParamFrame(String payload){
     this->allowChargeOnVehicle = true;
   }else{
     this->allowChargeOnVehicle = false;
+    digitalWrite(VEH_ALIM_RELAY_PIN, LOW);
   }
   
   if(payload.charAt(6) == '1'){

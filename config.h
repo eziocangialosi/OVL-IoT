@@ -57,6 +57,7 @@ const char MQTT_PSWD[] = "mqtt_pass"; //Mqtt password for this tracker
 #define DEFAULT_SAFE_ZONE_DIAM 15 //Default diameter of the SafeZone, default 15
 #define DEFAULT_INTERVAL (5*60) //Default interval between 2 position refresh, default 5min
 #define DEFAULT_INTERVAL_WHEN_ALM 5 //Default interval between 2 position refresh when alarm is on, default 5sec
+#define MINIMAL_INTERVAL 30 //Minimal interval beetween 2 position refresh when alarm is off, default 30sec
 #define DELAY_CHG_VEH (5*60) //Default delay before charging on vehicle battery when is avail, default 5min
 #define VEH_ALIM_SENSOR_PIN 4 //Pin used to detect when the vehicle power is avail
 #define VEH_ALIM_RELAY_PIN 12 //Pin used to command the charge on vehicle battery
