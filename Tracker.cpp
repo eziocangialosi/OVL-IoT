@@ -101,10 +101,12 @@ void Tracker::whenMqttRx(String payload){
     if(payload.charAt(4) == '1' && !this->positioning->isProtectionEnable()){
       this->positioning->enterPrtMode();
       this->usbDebug->wrt("Server enable protection mode");
+      this->cellular->sendMqtt("PRT-ACK");
     }else if(payload.charAt(4) == '0' && this->positioning->isProtectionEnable()){
       this->positioning->quitPrtMode();
       this->usbDebug->wrt("Server disable protection mode");
       alarm_is_on = false;
+      this->cellular->sendMqtt("PRT-ACK");
     }else{
       this->cellular->sendMqtt("ERR");
       this->usbDebug->wrt("Cannot edit protection mode");
