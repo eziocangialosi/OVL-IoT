@@ -136,6 +136,7 @@ bool Communicator::getHandCheckSuccess(){
 
 bool Communicator::sendMqtt(String aFrame){
   if(this->getIsConnected()){
+    this->pLightSign->blink(CRGB::Green);
     char buffer[aFrame.length() +1];
     aFrame.toCharArray(buffer, aFrame.length() +1);
     return this->pMqtt->publish(TOPIC_TX, buffer);
