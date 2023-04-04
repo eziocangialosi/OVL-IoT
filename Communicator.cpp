@@ -161,7 +161,6 @@ void Communicator::autoReconnect(){
     this->unlockSIM();
   }
   this->connectNetwork();*/
-  
   if(!this->pModem->isGprsConnected()){
     this->pUsbDebug->wrt("Celluar connection lost, trying to reconnect...");
     this->connectGPRS();
@@ -169,6 +168,9 @@ void Communicator::autoReconnect(){
   if(!this->pMqtt->connected()){
     this->pUsbDebug->wrt("Connection with broker lost, trying to reconnect...");
     this->connectMQTT();
+  }
+  if(this->getIsConnected()){
+    this->pLightSign->setToBlack();
   }
 }
 

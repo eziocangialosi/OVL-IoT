@@ -58,7 +58,7 @@ void Locator::rqPos(){
 }
 
 bool Locator::getPos(float* crntLat, float* crntLon){
-  if(this->gps->location.isValid() && this->gps->location.age() < 2000){
+  if(this->gpsIsFixed()){
     this->lastPosTime = millis();
     *crntLat = lastLat;
     *crntLon = lastLon;
@@ -79,27 +79,31 @@ bool Locator::getPrtPos(float* aPrtLat, float* aPrtLon){
 byte Locator::watchDog(){
   byte rtn_byte = 0;
   acquire_nmea_while_ms(1000);
-  if(this->gps->location.isValid() && this->gps->location.age() < 2000){
+  if(this->gpsIsFixed()){
     if(this->pLightSign->isBlinking()){
       this->pLightSign->stopBlinking();
     }
     //if the position has changed or date more than 5 min
-    if(((TinyGPSPlus::distanceBetween(lastLat,lastLon,this->gps->location.lat(),this->gps->location.lng()) >= DISTANCE_TRIG)
-        && (millis() - this->lastPosTime > this->min_interval * 1000)) ||
-        (millis() - this->lastPosTime > this->interval * 1000))
+    if((TinyGPSPlus::distanceBetween(lastLat,lastLon,this->gps->location.lat(),this->gps->location.lng()) >= DISTANCE_TRIG) ||
+    (millis() - this->lastPosTime > this->interval * 1000))
     {
-      this->rqPos();
+      if(millis() - this->lastPosTime > this->min_interval * 1000){
+        rtn_byte += 1;
+        this->rqPos();
+      }
       if(protection_enable){
-        if(TinyGPSPlus::distanceBetween(lastLat,lastLon,prtLat,prtLon) > (this->safeZoneDiam / 2)){
+        if(TinyGPSPlus::distanceBetween(this->gps->location.lat(),this->gps->location.lng(),prtLat,prtLon) >
+        (this->safeZoneDiam / 2))
+        {
+          this->rqPos();
           rtn_byte += 2;
           this->pUsbDebug->wrt_inline("Distance with safeZone center : ");
           this->pUsbDebug->wrt_inline(String(TinyGPSPlus::distanceBetween(lastLat,lastLon,prtLat,prtLon)));
           this->pUsbDebug->wrt("m");
         }
       }
-      rtn_byte += 1;
+      delay(1);
     }
-
   }else if(!this->pLightSign->isBlinking()){
     this->pLightSign->blinkInfty(CRGB::Blue);
   }

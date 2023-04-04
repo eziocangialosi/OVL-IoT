@@ -29,7 +29,7 @@ class Tracker
       bool allowChargeOnVehicle = DEFAULT_VEH_CHG_STS; //If the user allow Charge on the vehicle battery
       bool eco_mode = DEFAULT_ECO_MODE_STS; //If the eco mode is activated
 
-      bool prt_as_been_rq = false; //If the protection mode as been requested by Srv
+      bool pos_as_been_rq = false; //If the protection mode as been requested by Srv
       int old_veh_alim_state = LOW; //Last vehicle state read on sensor pin
       unsigned long veh_alim_time = 0; //Time since which power is detected on sensor pin
       bool isOnCharge = false; //If the vehicle is on charge

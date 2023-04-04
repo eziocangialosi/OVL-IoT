@@ -47,7 +47,7 @@ const char MQTT_PSWD[] = "mqtt_pass"; //Mqtt password for this tracker
 /*******************************************/
 // GPS config
 #define GPS_BAUD 9600 //Serial baud used for gps module
-#define DISTANCE_TRIG 3 //Distance from which we define that the position has changed, defaut 3 meters
+#define DISTANCE_TRIG 5 //Distance from which we define that the position has changed, default 5 meters
 
 
 /*******************************************/

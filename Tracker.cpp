@@ -24,6 +24,7 @@ void Tracker::actionInLoop(){
   this->veh_charge_manager();
 
   if(!this->cellular->getIsConnected() && !this->cellular->getWaitingForHandCheck()){
+    this->lightSign->setTo(CRGB::Purple);
     this->cellular->autoReconnect();
   }
   
@@ -33,7 +34,7 @@ void Tracker::actionInLoop(){
     if(pos_value & 0x02){
       this->beginAlarm();
     }
-    if((pos_value & 0x01) && !this->prt_as_been_rq){
+    if((pos_value & 0x01) && !this->pos_as_been_rq){
       float getLat = 0;
       float getLon = 0;
       this->usbDebug->wrt("Position changed");
@@ -52,12 +53,12 @@ void Tracker::actionInLoop(){
     this->cellular->sendMqtt("STG-RQ");
   }else if(this->cellular->getWaitingForHandCheck() && this->cellular->getLastHandCheckRq() + 5000 < millis()
            && !this->cellular->getHandCheckSuccess()){
-    this->lightSign->blink(CRGB::Red);
+    this->lightSign->blink(CRGB::Orange);
     this->usbDebug->wrt("Retry to HandCheck...");
     this->cellular->tryHandCheck();
   }
 
-  this->prt_as_been_rq = false;
+  this->pos_as_been_rq = false;
 }
 
 void Tracker::beginAlarm(){
@@ -92,6 +93,8 @@ void Tracker::whenMqttRx(String payload){
     this->mqtt_whenPrt(payload.charAt(4));
   }else if(payload == "SFZ-RQ"){
     this->mqtt_whenSfzRq();
+  }else if(payload == "ALM-ACK"){
+    this->usbDebug->wrt("Server acknoweldge recived alarm");
   }else{
     this->cellular->sendMqtt("ERR");
     this->usbDebug->wrt("Message interpretation failed");
@@ -188,7 +191,7 @@ void Tracker::mqtt_whenPosRq(){
   if(this->positioning->getPos(&posLat, &posLon)){
     this->usbDebug->wrt("Server Request POS");
     this->sendPos(posLat, posLon);
-    this->prt_as_been_rq = true;
+    this->pos_as_been_rq = true;
   }else{
     this->usbDebug->wrt("Position cannot be send...");
     this->cellular->sendMqtt("POS-ERR");
@@ -197,9 +200,14 @@ void Tracker::mqtt_whenPosRq(){
 
 void Tracker::mqtt_whenPrt(char value){
   if(value == '1' && !this->positioning->isProtectionEnable()){
-    this->positioning->enterPrtMode();
-    this->usbDebug->wrt("Server enable protection mode");
-    this->cellular->sendMqtt("PRT-ACK");
+    if(this->positioning->gpsIsFixed()){
+      this->positioning->enterPrtMode();
+      this->usbDebug->wrt("Server enable protection mode");
+      this->cellular->sendMqtt("PRT-ACK");
+    }else{
+      this->usbDebug->wrt("Cannot enable protection mode");
+      this->cellular->sendMqtt("PRT-ERR");
+    }
   }else if(value == '0' && this->positioning->isProtectionEnable()){
     this->positioning->quitPrtMode();
     this->usbDebug->wrt("Server disable protection mode");
