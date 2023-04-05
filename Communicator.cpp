@@ -136,6 +136,10 @@ void Communicator::handCheckHandle(String msg){
     this->waitingForHandCheck = false;
     this->handCheckSuccess = true;
     this->sendMqtt("ACK");
+    if(isFirstHandCheck){
+      this->sendDebugMqtt("Version : dev");
+      isFirstHandCheck = false;
+    }
   }
 }
 
@@ -205,4 +209,11 @@ bool Communicator::connectNetwork(){
     return true;
   }
   return false;
+}
+
+bool Communicator::sendDebugMqtt(String aPayload){
+  String frame = "TXT=\"";
+  frame += aPayload;
+  frame += "\"";
+  return this->sendMqtt(frame);
 }

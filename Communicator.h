@@ -40,11 +40,14 @@ class Communicator
       void tryHandCheck(); //Try to hand check with server
       bool getSimLocked();
       bool connectNetwork();
+      bool sendDebugMqtt(String aPayload);
+      
     private:
       SerialDebug* pUsbDebug;
       bool waitingForHandCheck = false; //If we wait for the Hand Check validation
       bool handCheckSuccess = false; //If the Hand Check as success
       bool wasInit = false; //If the obj was initialize
+      bool isFirstHandCheck = true;
       unsigned long lastHandCheckRq = 0; //Timestamp of the last HandCheck RQ
       uint32_t lastReconnectAttempt = 0; //Timestamp of the last reconnect attempt
       TinyGsm* pModem; //Pontor to TinyGsm class (GSM/GPRS Module)

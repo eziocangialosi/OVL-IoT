@@ -216,6 +216,7 @@ void Tracker::mqtt_whenPrt(char value){
     }else{
       this->usbDebug->wrt("Caution, protection mode is limited, currently no gps fix...");
       this->cellular->sendMqtt("PRT-LIM");
+      this->cellular->sendDebugMqtt("Caution protection is limited");
     }
   }else if(value == '0' && this->positioning->isProtectionEnable()){
     this->positioning->quitPrtMode();
