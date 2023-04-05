@@ -1,3 +1,12 @@
+/**
+ * @file        Locator.cpp
+ * @brief       All methods code for Locator class
+ * @details     Methods code for everything related to positioning
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #include "Locator.h"
 
 Locator::Locator(SerialDebug* aUsbDebug, LedIndicator* apLightSign){

@@ -1,3 +1,12 @@
+/**
+ * @file        Tracker.h
+ * @brief       Definition of Tracker class
+ * @details     This class manage all the algorithm of the tracker (this is the tracker "skeleton") : MQTT answers, Alarm mode, etc...
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #ifndef TRACKER_H
 #define TRACKER_H
 

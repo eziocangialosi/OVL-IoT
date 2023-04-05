@@ -1,3 +1,12 @@
+/**
+ * @file        LedIndicator.h
+ * @brief       Definition of LedIndicator class
+ * @details     This class is used to manage the firebeetle debug led
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #ifndef LEDINDICATOR_H
 #define LEDINDICATOR_H
 

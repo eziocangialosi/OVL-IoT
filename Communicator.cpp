@@ -1,3 +1,12 @@
+/**
+ * @file        Communicator.cpp
+ * @brief       All methods code for Communicator class
+ * @details     Methods code for everything related to communication (GPRS & MQTT)
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #include "Communicator.h"
 
 Communicator::Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign){

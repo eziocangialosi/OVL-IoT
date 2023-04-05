@@ -1,3 +1,12 @@
+/**
+ * @file        SerialDebug.h
+ * @brief       Definition of SerialDebug class
+ * @details     This class is used to send debug data via the USB port of the firebeetle
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #ifndef SERIALDEBUG_H
 #define SERIALDEBUG_H
 

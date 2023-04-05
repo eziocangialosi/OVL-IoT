@@ -1,3 +1,12 @@
+/**
+ * @file        Locator.h
+ * @brief       Definition of Locator class
+ * @details     This class manage positioning system (GPS)
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #ifndef LOCATOR_H
 #define LOCATOR_H
 

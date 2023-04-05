@@ -1,3 +1,12 @@
+/**
+ * @file        LedIndicator.cpp
+ * @brief       All methods code for LedIndicator class
+ * @details     Methods code for everything related to firebeetle debug led
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #include "LedIndicator.h"
 
 LedIndicator::LedIndicator(){

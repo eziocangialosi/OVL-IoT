@@ -1,3 +1,12 @@
+/**
+ * @file        Tracker.cpp
+ * @brief       All methods code for Tracker class
+ * @details     Methods code for all tracker algorithm
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #include "Tracker.h"
 
 void Tracker::beg(){

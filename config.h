@@ -1,3 +1,12 @@
+/**
+ * @file        config.h
+ * @brief       All the tracker configuration
+ * @details     Here you will find all the configuration, if you require to edit a parameter do it here
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #ifndef CONFIG_H
 #define CONFIG_H
 

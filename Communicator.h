@@ -1,3 +1,12 @@
+/**
+ * @file        Communicator.h
+ * @brief       Definition of Communicator class
+ * @details     This class manage everything related to communication (GPRS & MQTT)
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
+
 #ifndef COMMUNICATOR_H
 #define COMMUNICATOR_H
 
