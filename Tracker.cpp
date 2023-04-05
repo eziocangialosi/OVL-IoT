@@ -88,7 +88,7 @@ void Tracker::whenMqttRx(String payload){
     this->cellular->sendMqtt("PONG");
   }else if(payload == "POS-RQ"){
     this->mqtt_whenPosRq();
-  }else if(payload.startsWith("STG=") && this->waitForParam){
+  }else if(payload.startsWith("STG=")){
     this->parseParamFrame(payload);
     this->paramSetted = true;
     this->waitForParam = false;
