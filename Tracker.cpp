@@ -20,10 +20,9 @@ void Tracker::beg(){
   this->positioning = new Locator(usbDebug, lightSign);
   if(this->cellular->connectGPRS()){
     if(!this->cellular->connectMQTT()){
-      //return;
+      this->lightSign->setTo(CRGB::Red);
+      this->lightSign->killLoop();
     }
-  }else{
-    //return;
   }
 }
 
