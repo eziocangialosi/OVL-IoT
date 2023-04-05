@@ -210,13 +210,13 @@ void Tracker::mqtt_whenPosRq(){
 
 void Tracker::mqtt_whenPrt(char value){
   if(value == '1' && !this->positioning->isProtectionEnable()){
+    this->positioning->enterPrtMode();
+    this->usbDebug->wrt("Server enable protection mode");
     if(this->positioning->gpsIsFixed()){
-      this->positioning->enterPrtMode();
-      this->usbDebug->wrt("Server enable protection mode");
       this->cellular->sendMqtt("PRT-ACK");
     }else{
-      this->usbDebug->wrt("Cannot enable protection mode");
-      this->cellular->sendMqtt("PRT-ERR");
+      this->usbDebug->wrt("Caution, protection mode is limited, currently no gps fix...");
+      this->cellular->sendMqtt("PRT-LIM");
     }
   }else if(value == '0' && this->positioning->isProtectionEnable()){
     this->positioning->quitPrtMode();
