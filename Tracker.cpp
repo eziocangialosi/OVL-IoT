@@ -40,7 +40,8 @@ void Tracker::actionInLoop(){
       this->usbDebug->wrt("Position changed");
       this->positioning->getPos(&getLat, &getLon);
       this->sendPos(getLat, getLon);
-    } 
+    }
+    
   }else if(this->cellular->getHandCheckSuccess() && !this->cellular->getWaitingForHandCheck()
            && !this->positioning->getIsInit() && this->paramSetted){
     this->positioning->beg();

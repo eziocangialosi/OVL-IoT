@@ -19,7 +19,7 @@ void Locator::beg(){
   this->acquire_nmea_while_ms(1000);
   if(this->waitGPSFix(60)){
     pUsbDebug->wrt("GPS OK");
-    this->lastPosTime = millis();
+    this->lastPosTime = millis() + (DEFAULT_INTERVAL*1000);
     this->interval = DEFAULT_INTERVAL; //5min
     this->min_interval = MINIMAL_INTERVAL;
   }else{
@@ -47,9 +47,9 @@ bool Locator::waitGPSFix(unsigned long max_wait_sec){
   unsigned long start = millis();
   do{
     this->acquire_nmea_while_ms(1000);
-  }while((millis() - start < max_wait_sec * 1000) && !this->gps->location.isValid());
+  }while((millis() - start < max_wait_sec * 1000) && !this->gpsIsFixed());
 
-  return this->gps->location.isValid();
+  return this->gpsIsFixed();
 }
 
 void Locator::rqPos(){
@@ -85,9 +85,9 @@ byte Locator::watchDog(){
     }
     //if the position has changed or date more than 5 min
     if((TinyGPSPlus::distanceBetween(lastLat,lastLon,this->gps->location.lat(),this->gps->location.lng()) >= DISTANCE_TRIG) ||
-    (millis() - this->lastPosTime > this->interval * 1000))
+    ((millis() - this->lastPosTime) > (this->interval * 1000)))
     {
-      if(millis() - this->lastPosTime > this->min_interval * 1000){
+      if((millis() - this->lastPosTime) > (this->min_interval * 1000)){
         rtn_byte += 1;
         this->rqPos();
       }
@@ -102,7 +102,6 @@ byte Locator::watchDog(){
           this->pUsbDebug->wrt("m");
         }
       }
-      delay(1);
     }
   }else if(!this->pLightSign->isBlinking()){
     this->pLightSign->blinkInfty(CRGB::Blue);
