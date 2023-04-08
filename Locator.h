@@ -15,22 +15,82 @@
 #include "SerialDebug.h"
 #include "LedIndicator.h"
 
+/**
+ * @class       Locator Locator.h "Locator.h"
+ * @brief       This class manage call the positioning stuff
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
 class Locator
   {
     public:
-      Locator(SerialDebug* aUsbDebug, LedIndicator* apLightSign); //Constructor, pointor to serial debug class needed to send debug info
-      void beg(); //Intialization method
-      byte watchDog(); //Method who check if the gps position has changed
-      void enterPrtMode(); //Method to enter in protection mode
-      bool getPos(float* crntLat, float* crntLon); //Getter for the current position (Lat, Lon), return 1 if success, 0 if error
-      bool getPrtPos(float* aPrtLat, float* aPrtLon); //Getter for the protection position 
-      void setInterval(unsigned int secs); //Setter for the maximum interval between 2 position refresh
-      void setMinimalInterval(unsigned int secs); //Setter for the minimal interval between 2 position refresh
-      bool getIsInit(); //Getter for the is init flag
-      void setSafeZoneDiam(unsigned int aDiam); //Setter for the safe zone diameter (diameter in meters)
-      bool isProtectionEnable(); //Getter, true if the protecion is enabled false if isn't
-      void quitPrtMode(); //Method to quit the protection mode
-      bool gpsIsFixed(); //Getter, true if the GPS has a fix false if isn't
+      /** @brief Constructor
+       *  @details This constructor NOT initialize the class, it just usefull to give SerialDebug and LedIndicator object address
+       *  @param aUsbDebug pointor to SerialDebug class needed to send debug info
+       *  @param apLightSign pointor to LedIndicator needed to debug via led codes
+       *  @warning This class should not be use without intialize it with beg() method */
+      Locator(SerialDebug* aUsbDebug, LedIndicator* apLightSign);
+
+      /** @brief Intialization method
+       *  @details This method intilize the class. It wait for the GPS fix and setting up parameters */
+      void beg();
+
+      /** @brief Position algorithm
+       *  @details This method decide if the position has changed or not and if the position hasn't be send for too long
+       *  @return Return a byte, if the first bit (LSB) is true, the position need to be send,
+       *  if the 2nd bit is true, the tracker is outside the safezone
+       *  @pre Before using this method, please initialize the class */
+      byte watchDog();
+      
+      /** @brief Used to enter in protection mode
+       *  @details This method will define the safezone center at the current position
+       *  @note If the position cannot be established, the method will set the safezone at the last known position */
+      void enterPrtMode();
+
+      /** @brief Getter for the current position
+       *  @param crntLat pointor to a float where the latitude will be write
+       *  @param crntLon pointor to a float where the longitude will be write
+       *  @return True if the position could be collected, false otherwise */
+      bool getPos(float* crntLat, float* crntLon);
+
+      /** @brief Getter for the protection position
+       *  @param aPrtLat pointor to a float where the latitude will be write
+       *  @param aPrtLon pointor to a float where the longitude will be write
+       *  @return True if protection mode is enabled, false if isn't or if an error occured
+       *  @note The protection position is the safezone center */
+      bool getPrtPos(float* aPrtLat, float* aPrtLon);
+
+      /** @brief Setter for the MAXIMUM interval between two positions refresh/send
+       *  @param secs interval in seconds 
+       *  @note The maximum interval is used to force updating the position even if aren't movement */
+      void setInterval(unsigned int secs);
+
+      /** @brief Setter for the MINIMAL interval between two positions refresh/send
+       *  @param secs interval in seconds 
+       *  @note The minimal interval is used to prevent too regular updating of the position */
+      void setMinimalInterval(unsigned int secs);
+
+      /** @brief Getter to know if the class was initialize or not
+       *  @return True if the class is init, false otherwise */
+      bool getIsInit();
+
+      /** @brief Setter for safezone diameter
+       *  @param aDiam safezone diameter in meters */
+      void setSafeZoneDiam(unsigned int aDiam);
+
+      /** @brief Getter to know if the protection mode is enabled or not
+       *  @return True if it is, false otherwise */
+      bool isProtectionEnable();
+
+      /** @brief Method to quit the protection mode
+       *  @pre The protection mode should be enabled */
+      void quitPrtMode();
+
+      /** @brief Getter to know if the gps is fix
+       *  @param True if the GPS has fix, false if hasn't
+       *  @note GPS fix --> position avail */
+      bool gpsIsFixed();
 
     private:
       float prtLon; //Protection position (Lon)

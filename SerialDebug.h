@@ -17,6 +17,13 @@
 #define MSG_BORDER  "============================================"
 #define VERSION_MSG "OpenVehicleLocator Pre-Developpement version"
 
+/**
+ * @class       SerialDebug SerialDebug.h "SerialDebug.h"
+ * @brief       Used to send debug messages on usb serial link
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     dev
+ * @date        04/2023
+ */
 class SerialDebug
   {
     public:
