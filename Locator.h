@@ -40,7 +40,8 @@ class Locator
        *  @details This method decide if the position has changed or not and if the position hasn't be send for too long
        *  @return Return a byte, if the first bit (LSB) is true, the position need to be send,
        *  if the 2nd bit is true, the tracker is outside the safezone
-       *  @pre Before using this method, please initialize the class */
+       *  @pre Before using this method, please initialize the class
+       *  @bug The decision algorithm seems to be buggy, see dedicated github issue */
       byte watchDog();
       
       /** @brief Used to enter in protection mode
@@ -88,28 +89,46 @@ class Locator
       void quitPrtMode();
 
       /** @brief Getter to know if the gps is fix
-       *  @param True if the GPS has fix, false if hasn't
+       *  @return True if the GPS has fix, false if hasn't
        *  @note GPS fix --> position avail */
       bool gpsIsFixed();
 
     private:
-      float prtLon; //Protection position (Lon)
-      float prtLat; //same (Lat)
-      float lastLon; //Last recvied position (Lon)
-      float lastLat; //same (Lat)
-      bool isInit = false; //If the object is intialize or not
-      unsigned int safeZoneDiam = DEFAULT_SAFE_ZONE_DIAM; //Safe zone diameter
-      SerialDebug* pUsbDebug; //Pointor to serial debug obj
-      TinyGPSPlus* gps; //Pointor to GPS obj (GPS Module)
-      LedIndicator* pLightSign; //Pointor to led debug obj
-      unsigned int interval; //Max interval between 2 position refresh
-      unsigned int min_interval; //Minimal interval between 2 position refresh
-      unsigned long lastPosTime; //"Timestamp" of the last position refresh
-      bool protection_enable = false; //If the proection is enable
-      
-      void acquire_nmea_while_ms(unsigned long ms); //Wait a serial entry for milliseconds
-      bool waitGPSFix(unsigned long max_wait_sec); //Wait for a GPS Fix while secondes
-      void rqPos(); //Actualize position stored with last position recived from module
+      float prtLon; //!< Protection position (Longitude)
+      float prtLat; //!< Protection position (Latitude)
+      float lastLon; //!< Last knowned position (Longitude)
+      float lastLat; //!< Last knowed position (Latitude)
+      bool isInit = false; //<! If the object is initialize or not
+      unsigned int safeZoneDiam = DEFAULT_SAFE_ZONE_DIAM; //!< Safe zone diameter
+      SerialDebug* pUsbDebug; //!< Pointor to serial debug obj
+      TinyGPSPlus* gps; //!< Pointor to GPS obj (GPS Module)
+      LedIndicator* pLightSign; //!< Pointor to led debug obj
+      unsigned int interval; //!< Max interval between 2 position refresh
+      unsigned int min_interval; //!< Minimal interval between 2 position refresh
+      unsigned long lastPosTime; //!< "Timestamp" of the last position refresh
+      bool protection_enable = false; //!< If the protection mode is enable
+
+      /** @brief Method to acquire gps data
+       *  @details This method wait for data for a delay given in milliseconds
+       *  @param ms Time to wait for data in milliseconds
+       *  @note This method is mandatory to recived data from gps module */
+      void acquire_nmea_while_ms(unsigned long ms);
+
+      /** @brief Method that wait for gps fix during a maximum delay
+       *  @param max_wait_sec maximum delay in milliseconds
+       *  @return True if the GPS has fix, false if hasn't
+       *  @note GPS fix --> position avail */
+      bool waitGPSFix(unsigned long max_wait_sec);
+
+      /** @brief Method to actualize the stored position with the last position recived from module
+       *  @note If GPS is not fix, position won't be refresh */
+      void rqPos();
+
+      /** @brief Method that round float number for x decimals
+       *  @param in_value float with the number to round off
+       *  @param decimal_place int with the desired number of decimals
+       *  @return float with the rounded number
+       *  @deprecated This method is no longer used to round coordinates */
       float round_float_dp(float in_value, int decimal_place); //Round float number for x decimals
   };
 
