@@ -49,7 +49,7 @@ void Tracker::actionInLoop(){
       this->positioning->getPos(&getLat, &getLon);
       this->sendPos(getLat, getLon);
     }
-    
+    delay(250);
   }else if(this->cellular->getHandCheckSuccess() && !this->cellular->getWaitingForHandCheck()
            && !this->positioning->getIsInit() && this->paramSetted){
     this->positioning->beg();
