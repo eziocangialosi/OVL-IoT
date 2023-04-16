@@ -60,7 +60,7 @@ void Tracker::actionInLoop(){
     this->lightSign->setTo(CRGB::Orange);
     this->usbDebug->wrt("Requesting Param...");
     this->cellular->sendMqtt("STG-RQ");
-  }else if(this->cellular->getWaitingForHandCheck() && this->cellular->getLastHandCheckRq() + 5000 < millis()
+  }else if(this->cellular->getWaitingForHandCheck() && ((this->cellular->getLastHandCheckRq() + 5000 )< millis())
            && !this->cellular->getHandCheckSuccess()){
     this->lightSign->blink(CRGB::Orange);
     this->usbDebug->wrt("Retry to HandCheck...");
