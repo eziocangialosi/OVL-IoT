@@ -31,12 +31,12 @@ void Tracker::actionInLoop(){
   this->lightSign->ledLoop();
   this->veh_charge_manager();
 
-  if(!this->cellular->getIsConnected() && !this->cellular->getWaitingForHandCheck()){
+  if(!this->cellular->getIsConnected() && !this->cellular->getWaitingForHandshake()){
     this->lightSign->setTo(CRGB::Purple);
     this->cellular->autoReconnect();
   }
   
-  if(!this->cellular->getWaitingForHandCheck() && this->cellular->getHandCheckSuccess()
+  if(!this->cellular->getWaitingForHandshake() && this->cellular->getHandshakeSuccess()
   && this->positioning->getIsInit() && this->paramSetted){
     byte pos_value = this->positioning->watchDog();
     if(pos_value & 0x02){
@@ -50,21 +50,21 @@ void Tracker::actionInLoop(){
       this->sendPos(getLat, getLon);
     }
     delay(250);
-  }else if(this->cellular->getHandCheckSuccess() && !this->cellular->getWaitingForHandCheck()
+  }else if(this->cellular->getHandshakeSuccess() && !this->cellular->getWaitingForHandshake()
            && !this->positioning->getIsInit() && this->paramSetted){
     this->positioning->beg();
-  }else if(!this->cellular->getHandCheckSuccess() && this->cellular->getWaitingForHandCheck() && this->cellular->getLastHandCheckRq() + 5000 > millis()){
+  }else if(!this->cellular->getHandshakeSuccess() && this->cellular->getWaitingForHandshake() && this->cellular->getLastHandshakeRq() + 5000 > millis()){
     delay(1);
-  }else if(!this->paramSetted && !this->waitForParam && this->cellular->getHandCheckSuccess()){
+  }else if(!this->paramSetted && !this->waitForParam && this->cellular->getHandshakeSuccess()){
     this->waitForParam = true;
     this->lightSign->setTo(CRGB::Orange);
     this->usbDebug->wrt("Requesting Param...");
     this->cellular->sendMqtt("STG-RQ");
-  }else if(this->cellular->getWaitingForHandCheck() && ((this->cellular->getLastHandCheckRq() + 5000 )< millis())
-           && !this->cellular->getHandCheckSuccess()){
+  }else if(this->cellular->getWaitingForHandshake() && ((this->cellular->getLastHandshakeRq() + 5000 )< millis())
+           && !this->cellular->getHandshakeSuccess()){
     this->lightSign->blink(CRGB::Orange);
-    this->usbDebug->wrt("Retry to HandCheck...");
-    this->cellular->tryHandCheck();
+    this->usbDebug->wrt("Retry to handshake...");
+    this->cellular->tryHandshake();
   }
 
   this->pos_as_been_rq = false;

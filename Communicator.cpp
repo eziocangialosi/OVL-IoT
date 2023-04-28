@@ -67,7 +67,7 @@ bool Communicator::connectGPRS(){
 
 bool Communicator::connectMQTT(){
   if(this->pModem->isGprsConnected()){
-    this->handCheckSuccess = false;
+    this->handshakeSuccess = false;
     if(!this->wasInit){
       this->pMqtt->setServer(BROKER, MQTT_PORT);
       using std::placeholders::_1;
@@ -84,10 +84,10 @@ bool Communicator::connectMQTT(){
     
     if(this->pMqtt->connect(MQTT_USER, MQTT_USER, MQTT_PSWD)){
       this->pUsbDebug->wrt(" success");
-      this->pUsbDebug->wrt("Try HandCheck...");
-      this->waitingForHandCheck = true;
+      this->pUsbDebug->wrt("Try Handshake...");
+      this->waitingForHandshake = true;
       this->pMqtt->subscribe(TOPIC_RX);
-      this->tryHandCheck();
+      this->tryHandshake();
       this->pMqtt->loop();
       return true;
     }else{
@@ -103,19 +103,19 @@ void Communicator::mqttCallback(char* topic, byte* payload, unsigned int len) {
   for(unsigned int i = 0; i < len; i++){
     msg += (char)payload[i];
   }
-  if(this->waitingForHandCheck){
-    this->handCheckHandle(msg);
+  if(this->waitingForHandshake){
+    this->handshakeHandle(msg);
   }else{
     this->calledWhenMsg(msg);
   }
 }
 
-bool Communicator::getWaitingForHandCheck(){
-  return this->waitingForHandCheck;
+bool Communicator::getWaitingForHandshake(){
+  return this->waitingForHandshake;
 }
 
-unsigned long Communicator::getLastHandCheckRq(){
-  return this->lastHandCheckRq;
+unsigned long Communicator::getLastHandshakeRq(){
+  return this->lastHandshakeRq;
 }
 
 void Communicator::execMqttLoop(){
@@ -124,27 +124,27 @@ void Communicator::execMqttLoop(){
 
 bool Communicator::getIsConnected(){
   if(this->pMqtt->connected() && this->pModem->isGprsConnected()){
-    return this->handCheckSuccess;
+    return this->handshakeSuccess;
   }else{
     return false;
   }
 }
 
-void Communicator::handCheckHandle(String msg){
+void Communicator::handshakeHandle(String msg){
   if(msg == "SYN-ACK"){
-    this->pUsbDebug->wrt("Hand Check OK");
-    this->waitingForHandCheck = false;
-    this->handCheckSuccess = true;
+    this->pUsbDebug->wrt("Handshake OK");
+    this->waitingForHandshake = false;
+    this->handshakeSuccess = true;
     this->sendMqtt("ACK");
-    if(isFirstHandCheck){
+    if(isFirstHandshake){
       this->sendDebugMqtt("Version : dev");
-      isFirstHandCheck = false;
+      isFirstHandshake = false;
     }
   }
 }
 
-bool Communicator::getHandCheckSuccess(){
-  return this->handCheckSuccess;
+bool Communicator::getHandshakeSuccess(){
+  return this->handshakeSuccess;
 }
 
 bool Communicator::sendMqtt(String aFrame){
@@ -187,8 +187,8 @@ void Communicator::autoReconnect(){
   }
 }
 
-void Communicator::tryHandCheck(){
-  this->lastHandCheckRq = millis();
+void Communicator::tryHandshake(){
+  this->lastHandshakeRq = millis();
   this->pMqtt->publish(TOPIC_TX, "SYN");
 }
 

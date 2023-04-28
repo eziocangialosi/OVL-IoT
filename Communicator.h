@@ -52,31 +52,31 @@ class Communicator
       bool sendMqtt(String aFrame);
       
       /** @brief Getter to know if the connection is established with server
-       *  @note Connection is considered established when MQTT, GPRS and HandCheck as success
+       *  @note Connection is considered established when MQTT, GPRS and handshake as success
        *  @return True if the connection is established, false otherwise */
       bool getIsConnected();
 
-      /** @brief Getter to know we're currently waiting for the handcheck anwser
+      /** @brief Getter to know we're currently waiting for the handshake anwser
        *  @return True if the tracker waiting for an answer, false otherwise */
-      bool getWaitingForHandCheck();
+      bool getWaitingForHandshake();
 
-      /** @brief Getter of the timestamp of the last HandCheck attempt
+      /** @brief Getter of the timestamp of the last handshake attempt
        *  @note The timestamp is in milliseconds and does not represent UTC datetime
        *  @return Timestamp in milliseconds */
-      unsigned long getLastHandCheckRq();
+      unsigned long getLastHandshakeRq();
       
-      /** @brief Getter to now is the handcheck has success
-       *  @note HandCheck is successful when tracker recive "SYN-ACK"
-       *  @return True if the handcheck has success, false otherwise */
-      bool getHandCheckSuccess();
+      /** @brief Getter to now is the handshake has success
+       *  @note Handshake is successful when tracker recive "SYN-ACK"
+       *  @return True if the handshake has success, false otherwise */
+      bool getHandshakeSuccess();
 
       /** @brief Method to call the mqtt loop (Mandatory to recived mqtt messages)
        *  @note This loop should be called regularly to allow the client to process incoming messages and maintain its connection to the server */
       void execMqttLoop();
 
-      /** @brief Method that handle the handcheck answer
+      /** @brief Method that handle the handshake answer
        *  @param String that contain the recived message */
-      void handCheckHandle(String msg);
+      void handshakeHandle(String msg);
 
       /** @brief Setter to define the method called when a mqtt message is recived
        *  @note TRACKER_CALLBACK_SIG is an address of an void function that take a String in parameter
@@ -97,8 +97,8 @@ class Communicator
        *  @note It will try to restore GPRS and/or MQTT connection, it cannot retry to unlock the sim card */   
       void autoReconnect();
 
-      /** @brief Method used to try an handcheck with server */
-      void tryHandCheck();
+      /** @brief Method used to try an handshake with server */
+      void tryHandshake();
 
       /** @brief Getter to know if the sim card is locked
        *  @warning This information is taken from the GPRS module, it can be not reliable
@@ -117,11 +117,11 @@ class Communicator
       
     private:
       SerialDebug* pUsbDebug; //!< Pointor to SerialDebug class
-      bool waitingForHandCheck = false; //!< If we wait for the Hand Check validation
-      bool handCheckSuccess = false; //!< If the Hand Check as success
+      bool waitingForHandshake = false; //!< If we wait for the Handshake validation
+      bool handshakeSuccess = false; //!< If the Handshake as success
       bool wasInit = false; //!< If the obj was initialize
-      bool isFirstHandCheck = true; //!< If there was more than one handcheck
-      unsigned long lastHandCheckRq = 0; //!< Timestamp of the last HandCheck request
+      bool isFirstHandshake = true; //!< If there was more than one handshake
+      unsigned long lastHandshakeRq = 0; //!< Timestamp of the last handshake request
       uint32_t lastReconnectAttempt = 0; //!< Timestamp of the last reconnect attempt
       TinyGsm* pModem; //!< Pontor to TinyGsm class (GSM/GPRS Module)
       TinyGsmClient* pClient; //!< Pointor to TinyGsmClient class (Interface between MQTT and GSM/GPRS module)
