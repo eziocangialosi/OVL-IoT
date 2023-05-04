@@ -123,32 +123,42 @@ void Tracker::sendPos(float aLat, float aLon){
 }
 
 void Tracker::parseParamFrame(String payload){
+  bool isError = false;
   if(payload.charAt(4) == '1'){
     this->allowChargeOnVehicle = true;
-  }else{
+  }else if(payload.charAt(4) == '0'){
     this->allowChargeOnVehicle = false;
     digitalWrite(VEH_ALIM_RELAY_PIN, LOW);
-  }
-  
-  if(payload.charAt(6) == '1'){
-    this->eco_mode = true;
   }else{
-    this->eco_mode = false;
+    isError = true;
   }
   
-  if(payload.charAt(8) == '1' && !this->positioning->isProtectionEnable()){
-    this->positioning->enterPrtMode();
-  }else if(payload.charAt(8) == '0' && this->positioning->isProtectionEnable()){
-    this->positioning->quitPrtMode();
-    alarm_is_on = false;
+  if(payload.charAt(6) == '1' && !isError){
+    this->eco_mode = true;
+  }else if(payload.charAt(6) == '0' && !isError){
+    this->eco_mode = false;
+  }else{
+    isError = true;
   }
-  String str_diam = payload.substring(10);
-  unsigned int recivedDiam = str_diam.toInt();
-  this->usbDebug->wrt_inline("Safe zone diameter set to : ");
-  this->usbDebug->wrt_inline(String(recivedDiam));
-  this->usbDebug->wrt("m");
-  this->positioning->setSafeZoneDiam(recivedDiam);
-  this->usbDebug->wrt("Param recived !");
+  
+  if((payload.charAt(8) == '1' || payload.charAt(8) == '0') && !isError){
+    this->mqtt_whenPrt(payload.charAt(8));
+  }else{
+    isError = true;
+  }
+  if(!isError){
+    String str_diam = payload.substring(10);
+    unsigned int recivedDiam = str_diam.toInt();
+    this->usbDebug->wrt_inline("Safe zone diameter set to : ");
+    this->usbDebug->wrt_inline(String(recivedDiam));
+    this->usbDebug->wrt("m");
+    this->positioning->setSafeZoneDiam(recivedDiam);
+    this->usbDebug->wrt("Param recived !");
+    this->cellular->sendMqtt("STG-ACK");
+  }else{
+    this->cellular->sendMqtt("ERR");
+  }
+  
 }
 
 void Tracker::sendSts(){
@@ -207,8 +217,8 @@ void Tracker::mqtt_whenPosRq(){
   }
 }
 
-void Tracker::mqtt_whenPrt(char value){
-  if(value == '1' && !this->positioning->isProtectionEnable()){
+void Tracker::mqtt_whenPrt(char aValue){
+  if(aValue == '1' && !this->positioning->isProtectionEnable()){
     this->positioning->enterPrtMode();
     this->usbDebug->wrt("Server enable protection mode");
     if(this->positioning->gpsIsFixed()){
@@ -218,13 +228,13 @@ void Tracker::mqtt_whenPrt(char value){
       this->cellular->sendMqtt("PRT-LIM");
       this->cellular->sendDebugMqtt("Caution protection is limited");
     }
-  }else if(value == '0' && this->positioning->isProtectionEnable()){
+  }else if(aValue == '0' && this->positioning->isProtectionEnable()){
     this->positioning->quitPrtMode();
     this->usbDebug->wrt("Server disable protection mode");
     this->alarm_is_on = false;
     this->cellular->sendMqtt("PRT-ACK");
-  }else{
-    this->cellular->sendMqtt("ERR");
+  }else if(aValue != '0' && !this->paramSetted){
+    this->cellular->sendMqtt("PRT-ERR");
     this->usbDebug->wrt("Cannot edit protection mode");
   }
 }

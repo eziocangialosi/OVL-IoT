@@ -72,7 +72,7 @@ class Tracker
        *  @details This method responds the right frame depending of the situation 
        *  @remark If the gps fix isn't available the this method will send an "PRT-LIM" frame, this frame
        *  means that the protection mode is limited */
-      void mqtt_whenPrt(char value);
+      void mqtt_whenPrt(char aValue);
 
       /** @brief Method call when a safezone request is recived
        *  @details This method send the safe zone coordinates if protection mode is enabled */
