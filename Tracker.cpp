@@ -66,7 +66,6 @@ void Tracker::actionInLoop(){
     this->usbDebug->wrt("Retry to handshake...");
     this->cellular->tryHandshake();
   }
-
   this->pos_as_been_rq = false;
 }
 
@@ -89,8 +88,6 @@ void Tracker::whenMqttRx(String payload){
     this->mqtt_whenPosRq();
   }else if(payload.startsWith("STG=")){
     this->parseParamFrame(payload);
-    this->paramSetted = true;
-    this->waitForParam = false;
   }else if(payload == "POS-ACK"){
     this->usbDebug->wrt("Server acknoweldge recived position");
   }else if(payload == "STS-RQ"){
@@ -140,12 +137,13 @@ void Tracker::parseParamFrame(String payload){
   }else{
     isError = true;
   }
-  
+
   if((payload.charAt(8) == '1' || payload.charAt(8) == '0') && !isError){
     this->mqtt_whenPrt(payload.charAt(8));
   }else{
     isError = true;
   }
+
   if(!isError){
     String str_diam = payload.substring(10);
     unsigned int recivedDiam = str_diam.toInt();
@@ -155,10 +153,11 @@ void Tracker::parseParamFrame(String payload){
     this->positioning->setSafeZoneDiam(recivedDiam);
     this->usbDebug->wrt("Param recived !");
     this->cellular->sendMqtt("STG-ACK");
+    this->paramSetted = true;
+    this->waitForParam = false;
   }else{
     this->cellular->sendMqtt("ERR");
   }
-  
 }
 
 void Tracker::sendSts(){
@@ -218,7 +217,7 @@ void Tracker::mqtt_whenPosRq(){
 }
 
 void Tracker::mqtt_whenPrt(char aValue){
-  if(aValue == '1' && !this->positioning->isProtectionEnable()){
+  if(aValue == '1' && !this->positioning->isProtectionEnable() && this->positioning->getIsInit()){
     this->positioning->enterPrtMode();
     this->usbDebug->wrt("Server enable protection mode");
     if(this->positioning->gpsIsFixed()){
@@ -228,12 +227,12 @@ void Tracker::mqtt_whenPrt(char aValue){
       this->cellular->sendMqtt("PRT-LIM");
       this->cellular->sendDebugMqtt("Caution protection is limited");
     }
-  }else if(aValue == '0' && this->positioning->isProtectionEnable()){
+  }else if(aValue == '0' && this->positioning->isProtectionEnable() && this->positioning->getIsInit()){
     this->positioning->quitPrtMode();
     this->usbDebug->wrt("Server disable protection mode");
     this->alarm_is_on = false;
     this->cellular->sendMqtt("PRT-ACK");
-  }else if(aValue != '0' && !this->paramSetted){
+  }else if(aValue != '0' && !this->paramSetted && this->positioning->getIsInit()){
     this->cellular->sendMqtt("PRT-ERR");
     this->usbDebug->wrt("Cannot edit protection mode");
   }
