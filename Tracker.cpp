@@ -30,7 +30,9 @@ void Tracker::actionInLoop(){
   this->cellular->execMqttLoop();
   this->lightSign->ledLoop();
   this->veh_charge_manager();
-
+  
+  this->batteryWatchDog();
+  
   if(!this->cellular->getIsConnected() && !this->cellular->getWaitingForHandshake()){
     this->lightSign->setTo(CRGB::Purple);
     this->cellular->autoReconnect();
@@ -254,4 +256,14 @@ void Tracker::mqtt_whenSfzRq(){
     msg = "ERR";
   }
   this->cellular->sendMqtt(msg);
+}
+
+void Tracker::batteryWatchDog(){
+  if(this->cellular->getBatteryVolt() < LOW_VOLTAGE){
+    this->cellular->sendMqtt("BAT-LOW");
+    this->cellular->sendDebugMqtt("Battery too low, powering down");
+    this->usbDebug->wrt("Battery too low, powering down");
+    this->lightSign->setTo(CRGB::Red);
+    this->lightSign->killLoop();
+  }
 }

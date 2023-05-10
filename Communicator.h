@@ -88,11 +88,16 @@ class Communicator
        *  @return Percentage of the battery beetween 0 to 100% */      
       unsigned int getBatteryPercent();
 
+      /** @brief Getter of the battery voltage
+       *  @warning This percentage is taken from the GPRS module, it can be not reliable
+       *  @return Battery voltage in millivolts */   
+      unsigned int getBatteryVolt();
+
       /** @brief Getter to know if the battery is in charge
        *  @warning This information is taken from the GPRS module, it can be not reliable
        *  @return True if the battery is in charge, false otherwise */   
       bool getBatteryInCharge();
-
+      
       /** @brief Method called when connection is lost, it tries to restore the connection
        *  @note It will try to restore GPRS and/or MQTT connection, it cannot retry to unlock the sim card */   
       void autoReconnect();

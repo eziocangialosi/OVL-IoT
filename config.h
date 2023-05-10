@@ -180,6 +180,12 @@ const char MQTT_PSWD[] = "mqtt_pass";
  */
 #define VEH_ALIM_RELAY_PIN 12
 
+/**
+ * @def LOW_VOLTAGE
+ * Voltage in millivolts at which it is considered that the battery can be damaged (default 3500mV)
+ */
+#define LOW_VOLTAGE 3500
+
 /*******************************************/
 //Debug config
 

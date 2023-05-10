@@ -62,7 +62,6 @@ class Tracker
       /** @brief Method that manages the charge on vehicle battery */
       void veh_charge_manager();
 
-
       /** @brief Method call when a position request is recived
        *  @details This method responds the right frame depending of the situation :
        *  If position can be send, it send position, if it cannot send an error frame */
@@ -77,6 +76,10 @@ class Tracker
       /** @brief Method call when a safezone request is recived
        *  @details This method send the safe zone coordinates if protection mode is enabled */
       void mqtt_whenSfzRq();
+
+      /** @brief Method that watch the battery level to prevent damage on battery
+       *  @details If the battery voltage is under \ref LOW_VOLTAGE, the method powering down the tracker and send an alert */
+      void batteryWatchDog();
 
       bool alarm_is_on = false; //!< If the alarm is on/ringing
       bool waitForParam = false; //!< If we wait for server for parameters

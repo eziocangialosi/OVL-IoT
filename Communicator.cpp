@@ -164,6 +164,11 @@ void Communicator::setCallWhenMsg(TRACKER_CALLBACK_SIG){
 unsigned int Communicator::getBatteryPercent(){
   return this->pModem->getBattPercent();
 }
+
+unsigned int Communicator::getBatteryVolt(){
+  return this->pModem->getBattVoltage();
+}
+
 bool Communicator::getBatteryInCharge(){
   return this->pModem->getBattChargeState();
 }
