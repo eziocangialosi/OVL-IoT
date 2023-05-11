@@ -259,7 +259,8 @@ void Tracker::mqtt_whenSfzRq(){
 }
 
 void Tracker::batteryWatchDog(){
-  if(this->cellular->getBatteryVolt() < LOW_VOLTAGE){
+  unsigned int batVolt = this->cellular->getBatteryVolt();
+  if(batVolt < LOW_VOLTAGE && batVolt > 1000){
     this->cellular->sendMqtt("BAT-LOW");
     this->cellular->sendDebugMqtt("Battery too low, powering down");
     this->usbDebug->wrt("Battery too low, powering down");

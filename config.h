@@ -182,9 +182,9 @@ const char MQTT_PSWD[] = "mqtt_pass";
 
 /**
  * @def LOW_VOLTAGE
- * Voltage in millivolts at which it is considered that the battery can be damaged (default 3500mV)
+ * Voltage in millivolts at which it is considered that the battery can be damaged (default 3100mV)
  */
-#define LOW_VOLTAGE 3500
+#define LOW_VOLTAGE 3100
 
 /*******************************************/
 //Debug config
