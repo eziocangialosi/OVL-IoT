@@ -1,7 +1,17 @@
+/**
+ * @file        Locator.cpp
+ * @brief       All methods code for Locator class
+ * @details     Methods code for everything related to positioning
+ * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
+ * @version     v0.8.0-alpha
+ * @date        04/2023
+ */
+
 #include "Locator.h"
 
-Locator::Locator(SerialDebug* aUsbDebug){
+Locator::Locator(SerialDebug* aUsbDebug, LedIndicator* apLightSign){
   this->pUsbDebug = aUsbDebug;
+  this->pLightSign = apLightSign;
 }
 
 void Locator::beg(){
@@ -14,17 +24,19 @@ void Locator::beg(){
   this->gps = new TinyGPSPlus();
 
   pUsbDebug->wrt("Wait for GPS fix");
-  
+  this->pLightSign->setTo(CRGB::Blue);
   this->acquire_nmea_while_ms(1000);
   if(this->waitGPSFix(60)){
     pUsbDebug->wrt("GPS OK");
-    this->lastPosTime = millis();
+    this->lastPosTime = millis() + (DEFAULT_INTERVAL*1000);
     this->interval = DEFAULT_INTERVAL; //5min
+    this->min_interval = MINIMAL_INTERVAL;
   }else{
     this->pUsbDebug->wrt("GPS FAILED");
     this->pUsbDebug->wrt_inline("Only have ");
-    this->pUsbDebug->wrt_inline(String(gps->satellites.isValid()));
+    this->pUsbDebug->wrt_inline(String(this->gps->satellites.isValid()));
     this->pUsbDebug->wrt(" satellite(s)...");
+    this->pLightSign->blinkInfty(CRGB::Blue);
   }
   this->isInit = true;
 }
@@ -36,7 +48,7 @@ void Locator::acquire_nmea_while_ms(unsigned long ms){
   do 
   {
     while (Serial2.available())
-      gps->encode(Serial2.read());
+      this->gps->encode(Serial2.read());
   } while (millis() - start < ms);
 }
 
@@ -44,18 +56,18 @@ bool Locator::waitGPSFix(unsigned long max_wait_sec){
   unsigned long start = millis();
   do{
     this->acquire_nmea_while_ms(1000);
-  }while((millis() - start < max_wait_sec * 1000) && !gps->location.isValid());
+  }while((millis() - start < max_wait_sec * 1000) && !this->gpsIsFixed());
 
-  return gps->location.isValid();
+  return this->gpsIsFixed();
 }
 
 void Locator::rqPos(){
-  this->lastLat = gps->location.lat();
-  this->lastLon = gps->location.lng();
+  this->lastLat = this->gps->location.lat();
+  this->lastLon = this->gps->location.lng();
 }
 
 bool Locator::getPos(float* crntLat, float* crntLon){
-  if(gps->location.isValid()){
+  if(this->gpsIsFixed()){
     this->lastPosTime = millis();
     *crntLat = lastLat;
     *crntLon = lastLon;
@@ -76,37 +88,51 @@ bool Locator::getPrtPos(float* aPrtLat, float* aPrtLon){
 byte Locator::watchDog(){
   byte rtn_byte = 0;
   acquire_nmea_while_ms(1000);
-  if(gps->location.isValid()){
+  if(this->gpsIsFixed()){
+    if(this->pLightSign->isBlinking()){
+      this->pLightSign->stopBlinking();
+    }
     //if the position has changed or date more than 5 min
-    if((this->round_float_dp(lastLat,DP_POS) != this->round_float_dp(gps->location.lat(),DP_POS) ||
-    this->round_float_dp(lastLon,DP_POS) != this->round_float_dp(gps->location.lng(),DP_POS)) ||
-    (millis() - this->lastPosTime > this->interval * 1000))
+    if((TinyGPSPlus::distanceBetween(lastLat,lastLon,this->gps->location.lat(),this->gps->location.lng()) >= DISTANCE_TRIG) ||
+    ((millis() - this->lastPosTime) > (this->interval * 1000)))
     {
-      this->rqPos();
+      if((millis() - this->lastPosTime) > (this->min_interval * 1000)){
+        rtn_byte += 1;
+        this->rqPos();
+      }
       if(protection_enable){
-        if(TinyGPSPlus::distanceBetween(lastLat,lastLon,prtLat,prtLon) > this->safeZoneDiam){
+        if(TinyGPSPlus::distanceBetween(this->gps->location.lat(),this->gps->location.lng(),prtLat,prtLon) >
+        (this->safeZoneDiam / 2))
+        {
+          this->rqPos();
           rtn_byte += 2;
           this->pUsbDebug->wrt_inline("Distance with safeZone center : ");
           this->pUsbDebug->wrt_inline(String(TinyGPSPlus::distanceBetween(lastLat,lastLon,prtLat,prtLon)));
           this->pUsbDebug->wrt("m");
         }
       }
-      rtn_byte += 1;
     }
-
+  }else if(!this->pLightSign->isBlinking()){
+    this->pLightSign->blinkInfty(CRGB::Blue);
   }
   return rtn_byte;
 }
 
 void Locator::enterPrtMode(){
-  this->rqPos();
-  this->protection_enable = true;
-  this->prtLon = this->lastLon;
-  this->prtLat = this->lastLat;
+  if(this->isInit){
+    this->rqPos();
+    this->protection_enable = true;
+    this->prtLon = this->lastLon;
+    this->prtLat = this->lastLat;
+  } 
 }
 
 void Locator::setInterval(unsigned int secs){
   this->interval = secs;
+}
+
+void Locator::setMinimalInterval(unsigned int secs){
+  this->min_interval = secs;
 }
 
 float Locator::round_float_dp(float in_value, int decimal_place){
@@ -133,8 +159,9 @@ void Locator::quitPrtMode(){
   this->prtLon = 0;
   this->prtLat = 0;
   this->interval = DEFAULT_INTERVAL;
+  this->min_interval = MINIMAL_INTERVAL;
 }
 
 bool Locator::gpsIsFixed(){
-  return this->gps->location.isValid();
+  return (this->gps->location.isValid() && this->gps->location.age() < 2000);
 }
