@@ -3,7 +3,7 @@
  * @brief       Definition of LedIndicator class
  * @details     This class is used to manage the firebeetle debug led
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 
@@ -20,7 +20,7 @@
  * @brief       Class that managing the debug led
  * @details     This led is used to send debug codes via the RGB led
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 class LedIndicator

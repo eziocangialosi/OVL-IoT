@@ -3,7 +3,7 @@
  * @brief       All methods code for Communicator class
  * @details     Methods code for everything related to communication (GPRS & MQTT)
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 
@@ -137,7 +137,7 @@ void Communicator::handshakeHandle(String msg){
     this->handshakeSuccess = true;
     this->sendMqtt("ACK");
     if(isFirstHandshake){
-      this->sendDebugMqtt("Version : dev");
+      this->sendDebugMqtt("Version : v0.8.0-alpha");
       isFirstHandshake = false;
     }
   }

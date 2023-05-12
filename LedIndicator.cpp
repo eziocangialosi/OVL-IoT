@@ -3,7 +3,7 @@
  * @brief       All methods code for LedIndicator class
  * @details     Methods code for everything related to firebeetle debug led
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 

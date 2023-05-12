@@ -2,7 +2,7 @@
  * @file        OVL-IoT.ino
  * @brief       Arduino loop & setup and instance creation of the tracker object
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
  

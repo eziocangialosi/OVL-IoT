@@ -3,7 +3,7 @@
  * @brief       Definition of Communicator class
  * @details     This class manage everything related to communication (GPRS & MQTT)
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 
@@ -23,7 +23,7 @@
  * @brief       Class that managing everything related to comunication
  * @details     This one is used to manage the dialog with the GPRS module and the implementation of MQTT protocol
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 class Communicator

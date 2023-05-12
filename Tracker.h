@@ -3,7 +3,7 @@
  * @brief       Definition of Tracker class
  * @details     This class manage all the algorithm of the tracker (this is the tracker "skeleton") : MQTT answers, Alarm mode, etc...
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 
@@ -18,7 +18,7 @@
  * @class       Tracker Tracker.h "Tracker.h"
  * @brief       This class manage all the algorithm of the tracker (this is the tracker "skeleton") : MQTT answers, Alarm mode, etc...
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 class Tracker

@@ -3,7 +3,7 @@
  * @brief       Definition of Locator class
  * @details     This class manage positioning system (GPS)
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 
@@ -19,7 +19,7 @@
  * @class       Locator Locator.h "Locator.h"
  * @brief       This class manage call the positioning stuff
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 class Locator

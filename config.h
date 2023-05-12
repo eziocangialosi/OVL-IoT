@@ -3,7 +3,7 @@
  * @brief       All the tracker configuration
  * @details     Here you will find all the configuration, if you require to edit a parameter do it here
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     dev
+ * @version     v0.8.0-alpha
  * @date        04/2023
  */
 
