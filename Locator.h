@@ -40,8 +40,7 @@ class Locator
        *  @details This method decide if the position has changed or not and if the position hasn't be send for too long
        *  @return Return a byte, if the first bit (LSB) is true, the position need to be send,
        *  if the 2nd bit is true, the tracker is outside the safezone
-       *  @pre Before using this method, please initialize the class
-       *  @bug The decision algorithm seems to be buggy, see dedicated github issue */
+       *  @pre Before using this method, please initialize the class */
       byte watchDog();
       
       /** @brief Used to enter in protection mode
