@@ -6,8 +6,11 @@
 Welcome on the electronic part of the OpenVehicleLocator project ! Here you will find all files related to the software on the microcontroller <br>
 If you're not looking for the electronic part you can navigate between all the repositories in the [Project navigator](https://github.com/eziocangialosi/OpenVehicleLocator#project-navigation).
 
-## Dependencies
-You can access to all dependencies informations by this link : [Dependencies](https://github.com/eziocangialosi/OVL-Documentation/blob/master/tracker-iot/dependencies.md)
+## Deployment
+A whole page is available [here](https://doc.ovl-project.org/page_deployment.html) to explain to you how to make your own tracker.
 
-> **Warning**<br>
-> All the project is **UNREADY** for deployment ! An alpha version will be released in the coming months...
+## Dependencies
+You can access to all dependencies informations by this link : [Dependencies](https://doc.ovl-project.org/page_dependencies.html)
+
+## Documentation
+The documentation of the project is available on <a href="https://doc.ovl-project.org/tracker-iot">https://doc.ovl-project.org</a>.
