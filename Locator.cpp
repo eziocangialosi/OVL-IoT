@@ -3,7 +3,7 @@
  * @brief       All methods code for Locator class
  * @details     Methods code for everything related to positioning
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 
@@ -15,7 +15,7 @@ Locator::Locator(SerialDebug* aUsbDebug, LedIndicator* apLightSign){
 }
 
 void Locator::beg(){
-  Serial2.begin(GPS_BAUD);
+  Uart_gps.begin(GPS_BAUD, SWSERIAL_8N1, GPS_RX, GPS_TX, false);
   
   pUsbDebug->wrt("GPS initializing");
   pUsbDebug->wrt_inline("Lib ver:");
@@ -47,8 +47,8 @@ void Locator::acquire_nmea_while_ms(unsigned long ms){
   unsigned long start = millis();
   do 
   {
-    while (Serial2.available())
-      this->gps->encode(Serial2.read());
+    while (Uart_gps.available())
+      this->gps->encode(Uart_gps.read());
   } while (millis() - start < ms);
 }
 

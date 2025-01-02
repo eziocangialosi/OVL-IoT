@@ -3,7 +3,7 @@
  * @brief       All methods code for Tracker class
  * @details     Methods code for all tracker algorithm
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 
@@ -12,6 +12,13 @@
 void Tracker::beg(){
   pinMode(VEH_ALIM_SENSOR_PIN, INPUT);
   pinMode(VEH_ALIM_RELAY_PIN, OUTPUT);
+
+  pinMode(GSM_RX, INPUT);
+  pinMode(GSM_TX, OUTPUT);
+  
+  pinMode(GPS_RX, INPUT);
+  pinMode(GPS_TX, OUTPUT);
+  
   this->usbDebug = new SerialDebug(USB_BAUD);
   this->lightSign = new LedIndicator();
   this->cellular = new Communicator(usbDebug, lightSign);

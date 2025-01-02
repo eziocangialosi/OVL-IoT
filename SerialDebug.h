@@ -3,7 +3,7 @@
  * @brief       Definition of SerialDebug class
  * @details     This class is used to send debug data via the USB port of the firebeetle
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 
@@ -15,13 +15,13 @@
 
 //!< Messages will be send on serial when tracker boot
 #define MSG_BORDER  "==============================="
-#define VERSION_MSG "OpenVehicleLocator v0.8.0-Alpha"
+#define VERSION_MSG "OpenVehicleLocator dev-v0.9.0"
 
 /**
  * @class       SerialDebug SerialDebug.h "SerialDebug.h"
  * @brief       Used to send debug messages on usb serial link
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 class SerialDebug

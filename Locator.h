@@ -3,23 +3,25 @@
  * @brief       Definition of Locator class
  * @details     This class manage positioning system (GPS)
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 
 #ifndef LOCATOR_H
 #define LOCATOR_H
 
-#include <TinyGPSPlus.h>
-
 #include "SerialDebug.h"
 #include "LedIndicator.h"
+
+#include <TinyGPSPlus.h>
+#include <SoftwareSerial.h>
+
 
 /**
  * @class       Locator Locator.h "Locator.h"
  * @brief       This class manage call the positioning stuff
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 class Locator
@@ -102,6 +104,7 @@ class Locator
       SerialDebug* pUsbDebug; //!< Pointor to serial debug obj
       TinyGPSPlus* gps; //!< Pointor to GPS obj (GPS Module)
       LedIndicator* pLightSign; //!< Pointor to led debug obj
+      SoftwareSerial Uart_gps; //!< Object of the sotfware serial used to talk to the gps module
       unsigned int interval; //!< Max interval between 2 position refresh
       unsigned int min_interval; //!< Minimal interval between 2 position refresh
       unsigned long lastPosTime; //!< "Timestamp" of the last position refresh

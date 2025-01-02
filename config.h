@@ -3,7 +3,7 @@
  * @brief       All the tracker configuration
  * @details     Here you will find all the configuration, if you require to edit a parameter do it here
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 
@@ -15,9 +15,21 @@
 
 /**
  * @def GSM_BAUD
- * Serial baud used ot communicate with gprs module
+ * Serial baud used to communicate with gprs module
  */
 #define GSM_BAUD 9600 
+
+/**
+ * @def GSM_RX
+ * Serial RX pin used to the UART link with gprs module
+ */
+#define GSM_RX 2
+
+/**
+ * @def GSM_TX
+ * Serial TX pin used to the UART link with gprs module
+ */
+#define GSM_TX 13
 
 // Select your modem:
 #define TINY_GSM_MODEM_SIM800
@@ -115,6 +127,18 @@ const char MQTT_PSWD[] = "mqtt_pass";
  * Serial baud used for gps module
  */
 #define GPS_BAUD 9600
+
+/**
+ * @def GSM_RX
+ * Serial RX pin used to the UART link with gps module
+ */
+#define GPS_RX 4 
+
+/**
+ * @def GSM_TX
+ * Serial TX pin used to the UART link with gps module
+ */
+#define GPS_TX 5 
 
 /**
  * @def DISTANCE_TRIG

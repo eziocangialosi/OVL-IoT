@@ -3,7 +3,7 @@
  * @brief       Definition of Communicator class
  * @details     This class manage everything related to communication (GPRS & MQTT)
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 
@@ -17,13 +17,14 @@
 
 #include <PubSubClient.h>
 #include <TinyGsmClient.h>
+#include <SoftwareSerial.h>
 
 /**
  * @class       Communicator Communicator.h "Communicator.h"
  * @brief       Class that managing everything related to comunication
  * @details     This one is used to manage the dialog with the GPRS module and the implementation of MQTT protocol
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 class Communicator
@@ -131,6 +132,7 @@ class Communicator
       TinyGsm* pModem; //!< Pontor to TinyGsm class (GSM/GPRS Module)
       TinyGsmClient* pClient; //!< Pointor to TinyGsmClient class (Interface between MQTT and GSM/GPRS module)
       PubSubClient*  pMqtt; //!< Pointor to PubSubClient class (MQTT Client)
+      SoftwareSerial Uart_gsm; //!< Object of the sotfware serial used to tak to the gsm module
       LedIndicator* pLightSign; //!< Pointor to led debug obj
       TRACKER_CALLBACK_SIG; //!< Callback function stored
 

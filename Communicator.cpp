@@ -3,7 +3,7 @@
  * @brief       All methods code for Communicator class
  * @details     Methods code for everything related to communication (GPRS & MQTT)
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
- * @version     v0.8.0-alpha
+ * @version     dev-v0.9.0
  * @date        04/2023
  */
 
@@ -13,11 +13,11 @@ Communicator::Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign
   this->pUsbDebug = apSerialDebug;
   this->pLightSign = apLightSign;
   this->pUsbDebug->wrt("GPRS initializing...");
-  this->pModem = new TinyGsm(Serial1);
+  this->pModem = new TinyGsm(Uart_gsm);
   this->pClient = new TinyGsmClient(*pModem);
   this->pMqtt = new PubSubClient(*pClient);
   
-  Serial1.begin(GSM_BAUD);
+  Uart_gsm.begin(GSM_BAUD, SWSERIAL_8N1, GSM_RX, GSM_TX, false);
   delay(6000);
   
   this->pModem->restart();
@@ -137,7 +137,7 @@ void Communicator::handshakeHandle(String msg){
     this->handshakeSuccess = true;
     this->sendMqtt("ACK");
     if(isFirstHandshake){
-      this->sendDebugMqtt("Version : v0.8.0-alpha");
+      this->sendDebugMqtt("Version : dev-v0.9.0");
       isFirstHandshake = false;
     }
   }
