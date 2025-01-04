@@ -39,8 +39,11 @@ const char* topicDebug     = "unit-test/debug";
 
 #include <TinyGsmClient.h>
 #include <PubSubClient.h>
+#include <SoftwareSerial.h>
 
-TinyGsm        modem(Serial1);
+SoftwareSerial Uart_gsm;
+
+TinyGsm        modem(Uart_gsm);
 TinyGsmClient client(modem);
 PubSubClient  mqtt(client);
 
@@ -99,7 +102,7 @@ void setup() {
   Serial.println("Wait...");
 
   // Set GSM module baud rate
-  Serial1.begin(9600);
+  Uart_gsm.begin(9600, SWSERIAL_8N1, 12, 13, false);
   delay(6000);
 
   Serial.println("Initializing modem...");
