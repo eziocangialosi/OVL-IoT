@@ -4,7 +4,7 @@
  * @details     Methods code for all tracker algorithm
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
  * @version     dev-v0.9.0
- * @date        04/2023
+ * @date        01/2024
  */
 
 #include "Tracker.h"
@@ -20,28 +20,27 @@ void Tracker::beg(){
   pinMode(GPS_TX, OUTPUT);
   
   this->usbDebug = new SerialDebug(USB_BAUD);
-  this->lightSign = new LedIndicator();
-  this->cellular = new Communicator(usbDebug, lightSign);
+  this->cellular = new Communicator(usbDebug);
   using std::placeholders::_1;
   this->cellular->setCallWhenMsg(std::bind(&Tracker::whenMqttRx,this,_1));
-  this->positioning = new Locator(usbDebug, lightSign);
+  this->positioning = new Locator(usbDebug);
   if(this->cellular->connectGPRS()){
     if(!this->cellular->connectMQTT()){
-      this->lightSign->setTo(CRGB::Red);
-      this->lightSign->killLoop();
+      ESP.restart();
     }
+  }else{
+    this->usbDebug->wrt("Fuck");
+    ESP.restart();
   }
 }
 
 void Tracker::actionInLoop(){
   this->cellular->execMqttLoop();
-  this->lightSign->ledLoop();
   this->veh_charge_manager();
   
   this->batteryWatchDog();
   
   if(!this->cellular->getIsConnected() && !this->cellular->getWaitingForHandshake()){
-    this->lightSign->setTo(CRGB::Purple);
     this->cellular->autoReconnect();
   }
   
@@ -66,12 +65,10 @@ void Tracker::actionInLoop(){
     delay(1);
   }else if(!this->paramSetted && !this->waitForParam && this->cellular->getHandshakeSuccess()){
     this->waitForParam = true;
-    this->lightSign->setTo(CRGB::Orange);
     this->usbDebug->wrt("Requesting Param...");
     this->cellular->sendMqtt("STG-RQ");
   }else if(this->cellular->getWaitingForHandshake() && ((this->cellular->getLastHandshakeRq() + 5000 )< millis())
            && !this->cellular->getHandshakeSuccess()){
-    this->lightSign->blink(CRGB::Orange);
     this->usbDebug->wrt("Retry to handshake...");
     this->cellular->tryHandshake();
   }
@@ -89,7 +86,6 @@ void Tracker::beginAlarm(){
 }
 
 void Tracker::whenMqttRx(String payload){
-  this->lightSign->blink(CRGB::Green);
   if(payload == "PING"){
     this->usbDebug->wrt("Recived ping"); 
     this->cellular->sendMqtt("PONG");
@@ -271,7 +267,6 @@ void Tracker::batteryWatchDog(){
     this->cellular->sendMqtt("BAT-LOW");
     this->cellular->sendDebugMqtt("Battery too low, powering down");
     this->usbDebug->wrt("Battery too low, powering down");
-    this->lightSign->setTo(CRGB::Red);
-    this->lightSign->killLoop();
+    ESP.restart();
   }
 }

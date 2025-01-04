@@ -4,7 +4,7 @@
  * @details     This class is used to send debug data via the USB port of the firebeetle
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
  * @version     dev-v0.9.0
- * @date        04/2023
+ * @date        01/2024
  */
 
 #ifndef SERIALDEBUG_H

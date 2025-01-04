@@ -4,7 +4,7 @@
  * @details     This class manage positioning system (GPS)
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
  * @version     dev-v0.9.0
- * @date        04/2023
+ * @date        01/2024
  */
 
 #ifndef LOCATOR_H
@@ -30,9 +30,8 @@ class Locator
       /** @brief Constructor
        *  @details This constructor NOT initialize the class, it just usefull to give SerialDebug and LedIndicator object address
        *  @param aUsbDebug pointor to SerialDebug class needed to send debug info
-       *  @param apLightSign pointor to LedIndicator needed to debug via led codes
        *  @warning This class should not be use without intialize it with beg() method */
-      Locator(SerialDebug* aUsbDebug, LedIndicator* apLightSign);
+      Locator(SerialDebug* aUsbDebug);
 
       /** @brief Intialization method
        *  @details This method intilize the class. It wait for the GPS fix and setting up parameters */
@@ -103,7 +102,6 @@ class Locator
       unsigned int safeZoneDiam = DEFAULT_SAFE_ZONE_DIAM; //!< Safe zone diameter
       SerialDebug* pUsbDebug; //!< Pointor to serial debug obj
       TinyGPSPlus* gps; //!< Pointor to GPS obj (GPS Module)
-      LedIndicator* pLightSign; //!< Pointor to led debug obj
       SoftwareSerial Uart_gps; //!< Object of the sotfware serial used to talk to the gps module
       unsigned int interval; //!< Max interval between 2 position refresh
       unsigned int min_interval; //!< Minimal interval between 2 position refresh

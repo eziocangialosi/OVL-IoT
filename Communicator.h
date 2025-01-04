@@ -4,7 +4,7 @@
  * @details     This class manage everything related to communication (GPRS & MQTT)
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
  * @version     dev-v0.9.0
- * @date        04/2023
+ * @date        01/2024
  */
 
 #ifndef COMMUNICATOR_H
@@ -13,7 +13,6 @@
 #define TRACKER_CALLBACK_SIG std::function<void(String)> calledWhenMsg
 
 #include "SerialDebug.h"
-#include "LedIndicator.h"
 
 #include <PubSubClient.h>
 #include <TinyGsmClient.h>
@@ -31,9 +30,8 @@ class Communicator
   {
     public:
       /** @brief Constructor, pointor to serial debug class needed to send debug info, pointor to led sign needed to debug via led codes
-       *  @param apSerialDebug pointor to SerialDebug class needed to send debug info
-       *  @param apLightSign pointor to LedIndicator needed to debug via led codes */
-      Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign);
+       *  @param apSerialDebug pointor to SerialDebug class needed to send debug info */
+      Communicator(SerialDebug* apSerialDebug);
       
       /** @brief Method to (Re)unlock sim card
        * @ return True if the sim card has been unlocked, false otherwise */
@@ -133,7 +131,6 @@ class Communicator
       TinyGsmClient* pClient; //!< Pointor to TinyGsmClient class (Interface between MQTT and GSM/GPRS module)
       PubSubClient*  pMqtt; //!< Pointor to PubSubClient class (MQTT Client)
       SoftwareSerial Uart_gsm; //!< Object of the sotfware serial used to tak to the gsm module
-      LedIndicator* pLightSign; //!< Pointor to led debug obj
       TRACKER_CALLBACK_SIG; //!< Callback function stored
 
       /** @brief Method called when a mqtt message is recvied

@@ -4,14 +4,13 @@
  * @details     Methods code for everything related to communication (GPRS & MQTT)
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
  * @version     dev-v0.9.0
- * @date        04/2023
+ * @date        01/2024
  */
 
 #include "Communicator.h"
 
-Communicator::Communicator(SerialDebug* apSerialDebug, LedIndicator* apLightSign){
+Communicator::Communicator(SerialDebug* apSerialDebug){
   this->pUsbDebug = apSerialDebug;
-  this->pLightSign = apLightSign;
   this->pUsbDebug->wrt("GPRS initializing...");
   this->pModem = new TinyGsm(Uart_gsm);
   this->pClient = new TinyGsmClient(*pModem);
@@ -40,8 +39,7 @@ bool Communicator::unlockSIM(){
     }else{
       this->pUsbDebug->wrt("");
       this->pUsbDebug->wrt("Fatal err: Unlocking failed");
-      this->pLightSign->setTo(CRGB::Red);
-      this->pLightSign->killLoop();
+      ESP.restart();
     }
     return false;
 }
@@ -149,8 +147,7 @@ bool Communicator::getHandshakeSuccess(){
 
 bool Communicator::sendMqtt(String aFrame){
   if(this->getIsConnected()){
-    this->pLightSign->blink(CRGB::Green);
-    char buffer[aFrame.length() +1];
+        char buffer[aFrame.length() +1];
     aFrame.toCharArray(buffer, aFrame.length() +1);
     return this->pMqtt->publish(TOPIC_TX, buffer);
   }
@@ -186,9 +183,6 @@ void Communicator::autoReconnect(){
   if(!this->pMqtt->connected()){
     this->pUsbDebug->wrt("Connection with broker lost, trying to reconnect...");
     this->connectMQTT();
-  }
-  if(this->getIsConnected()){
-    this->pLightSign->setToBlack();
   }
 }
 

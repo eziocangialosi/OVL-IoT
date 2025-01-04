@@ -4,14 +4,13 @@
  * @details     Methods code for everything related to positioning
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
  * @version     dev-v0.9.0
- * @date        04/2023
+ * @date        01/2024
  */
 
 #include "Locator.h"
 
-Locator::Locator(SerialDebug* aUsbDebug, LedIndicator* apLightSign){
+Locator::Locator(SerialDebug* aUsbDebug){
   this->pUsbDebug = aUsbDebug;
-  this->pLightSign = apLightSign;
 }
 
 void Locator::beg(){
@@ -24,7 +23,6 @@ void Locator::beg(){
   this->gps = new TinyGPSPlus();
 
   pUsbDebug->wrt("Wait for GPS fix");
-  this->pLightSign->setTo(CRGB::Blue);
   this->acquire_nmea_while_ms(1000);
   if(this->waitGPSFix(60)){
     pUsbDebug->wrt("GPS OK");
@@ -36,7 +34,6 @@ void Locator::beg(){
     this->pUsbDebug->wrt_inline("Only have ");
     this->pUsbDebug->wrt_inline(String(this->gps->satellites.isValid()));
     this->pUsbDebug->wrt(" satellite(s)...");
-    this->pLightSign->blinkInfty(CRGB::Blue);
   }
   this->isInit = true;
 }
@@ -89,9 +86,6 @@ byte Locator::watchDog(){
   byte rtn_byte = 0;
   acquire_nmea_while_ms(1000);
   if(this->gpsIsFixed()){
-    if(this->pLightSign->isBlinking()){
-      this->pLightSign->stopBlinking();
-    }
     //if the position has changed or date more than 5 min
     if((TinyGPSPlus::distanceBetween(lastLat,lastLon,this->gps->location.lat(),this->gps->location.lng()) >= DISTANCE_TRIG) ||
     ((millis() - this->lastPosTime) > (this->interval * 1000)))
@@ -112,8 +106,6 @@ byte Locator::watchDog(){
         }
       }
     }
-  }else if(!this->pLightSign->isBlinking()){
-    this->pLightSign->blinkInfty(CRGB::Blue);
   }
   return rtn_byte;
 }

@@ -4,7 +4,7 @@
  * @details     Methods code for usb debug port
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
  * @version     dev-v0.9.0
- * @date        04/2023
+ * @date        01/2024
  */
 
 #include "SerialDebug.h"

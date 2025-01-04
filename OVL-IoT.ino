@@ -3,7 +3,7 @@
  * @brief       Arduino loop & setup and instance creation of the tracker object
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
  * @version     dev-v0.9.0
- * @date        04/2023
+ * @date        01/2024
  */
  
 #include "Tracker.h"

@@ -4,7 +4,7 @@
  * @details     This class manage all the algorithm of the tracker (this is the tracker "skeleton") : MQTT answers, Alarm mode, etc...
  * @author      Ezio CANGIALOSI <eziocangialosi@gmail.com>
  * @version     dev-v0.9.0
- * @date        04/2023
+ * @date        01/2024
  */
 
 #ifndef TRACKER_H
@@ -95,7 +95,6 @@ class Tracker
       Communicator* cellular; //!< Pointor to Communicator instance (Srv communication)
       SerialDebug* usbDebug; //!< Pointor to SeriaDebug instance (Debug msg on usb port)
       Locator* positioning; //!< Pointor to Locator instance (GPS communication, acquire and parse)
-      LedIndicator* lightSign; //!< Pointor to LedIndicator instance (Debug led)
   };
 
 
