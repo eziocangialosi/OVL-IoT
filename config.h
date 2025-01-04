@@ -23,7 +23,7 @@
  * @def GSM_RX
  * Serial RX pin used to the UART link with gprs module
  */
-#define GSM_RX 2
+#define GSM_RX 12
 
 /**
  * @def GSM_TX
