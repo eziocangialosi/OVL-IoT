@@ -11,7 +11,6 @@
 #define LOCATOR_H
 
 #include "SerialDebug.h"
-#include "LedIndicator.h"
 
 #include <TinyGPSPlus.h>
 #include <SoftwareSerial.h>
