@@ -10,6 +10,8 @@
 #ifndef TRACKER_H
 #define TRACKER_H
 
+#include <user_interface.h>
+
 #include "SerialDebug.h"
 #include "Locator.h"
 #include "Communicator.h"

@@ -18,6 +18,12 @@ void Tracker::beg(){
   
   pinMode(GPS_RX, INPUT);
   pinMode(GPS_TX, OUTPUT);
+
+  wifi_set_opmode_current(NULL_MODE);  // set Wi-Fi working mode to unconfigured, don't save to flash
+  wifi_fpm_set_sleep_type(MODEM_SLEEP_T);  // set the sleep type to modem sleep
+  wifi_fpm_open();  // enable Forced Modem Sleep
+  wifi_fpm_do_sleep(0xFFFFFFF);  // force the modem to enter sleep mode
+  delay(10);  // without a minimum of delay(1) here it doesn't reliably enter sleep
   
   this->usbDebug = new SerialDebug(USB_BAUD);
   this->cellular = new Communicator(usbDebug);
