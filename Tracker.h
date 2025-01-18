@@ -38,10 +38,6 @@ class Tracker
        *  @warning This method is not already coded */
       bool checkInitParam();
 
-      /** @brief Method to enter in alarm mode
-       *  @details This method edit the maximum and minimal interval and send ALM to server */
-      void beginAlarm();
-
       /** @brief Method called when an MQTT message is recived 
        *  @param payload String containing the recived message
        *  @note This method is called by Communicator, it signature/address is given to Communicator in beg() method
@@ -68,16 +64,6 @@ class Tracker
        *  @details This method responds the right frame depending of the situation :
        *  If position can be send, it send position, if it cannot send an error frame */
       void mqtt_whenPosRq();
-
-      /** @brief Method call when the server try to change the protection mode value
-       *  @details This method responds the right frame depending of the situation 
-       *  @remark If the gps fix isn't available the this method will send an "PRT-LIM" frame, this frame
-       *  means that the protection mode is limited */
-      void mqtt_whenPrt(char aValue);
-
-      /** @brief Method call when a safezone request is recived
-       *  @details This method send the safe zone coordinates if protection mode is enabled */
-      void mqtt_whenSfzRq();
 
       /** @brief Method that watch the battery level to prevent damage on battery
        *  @details If the battery voltage is under \ref LOW_VOLTAGE, the method powering down the tracker and send an alert */

@@ -42,24 +42,12 @@ class Locator
        *  if the 2nd bit is true, the tracker is outside the safezone
        *  @pre Before using this method, please initialize the class */
       byte watchDog();
-      
-      /** @brief Used to enter in protection mode
-       *  @details This method will define the safezone center at the current position
-       *  @note If the position cannot be established, the method will set the safezone at the last known position */
-      void enterPrtMode();
 
       /** @brief Getter for the current position
        *  @param crntLat pointor to a float where the latitude will be write
        *  @param crntLon pointor to a float where the longitude will be write
        *  @return True if the position could be collected, false otherwise */
       bool getPos(float* crntLat, float* crntLon);
-
-      /** @brief Getter for the protection position
-       *  @param aPrtLat pointor to a float where the latitude will be write
-       *  @param aPrtLon pointor to a float where the longitude will be write
-       *  @return True if protection mode is enabled, false if isn't or if an error occured
-       *  @note The protection position is the safezone center */
-      bool getPrtPos(float* aPrtLat, float* aPrtLon);
 
       /** @brief Setter for the MAXIMUM interval between two positions refresh/send
        *  @param secs interval in seconds 
@@ -75,37 +63,21 @@ class Locator
        *  @return True if the class is init, false otherwise */
       bool getIsInit();
 
-      /** @brief Setter for safezone diameter
-       *  @param aDiam safezone diameter in meters */
-      void setSafeZoneDiam(unsigned int aDiam);
-
-      /** @brief Getter to know if the protection mode is enabled or not
-       *  @return True if it is, false otherwise */
-      bool isProtectionEnable();
-
-      /** @brief Method to quit the protection mode
-       *  @pre The protection mode should be enabled */
-      void quitPrtMode();
-
       /** @brief Getter to know if the gps is fix
        *  @return True if the GPS has fix, false if hasn't
        *  @note GPS fix --> position avail */
       bool gpsIsFixed();
 
     private:
-      float prtLon; //!< Protection position (Longitude)
-      float prtLat; //!< Protection position (Latitude)
       float lastLon; //!< Last knowned position (Longitude)
       float lastLat; //!< Last knowed position (Latitude)
       bool isInit = false; //<! If the object is initialize or not
-      unsigned int safeZoneDiam = DEFAULT_SAFE_ZONE_DIAM; //!< Safe zone diameter
       SerialDebug* pUsbDebug; //!< Pointor to serial debug obj
       TinyGPSPlus* gps; //!< Pointor to GPS obj (GPS Module)
       SoftwareSerial Uart_gps; //!< Object of the sotfware serial used to talk to the gps module
       unsigned int interval; //!< Max interval between 2 position refresh
       unsigned int min_interval; //!< Minimal interval between 2 position refresh
       unsigned long lastPosTime; //!< "Timestamp" of the last position refresh
-      bool protection_enable = false; //!< If the protection mode is enable
 
       /** @brief Method to acquire gps data
        *  @details This method wait for data for a delay given in milliseconds

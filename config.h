@@ -163,12 +163,6 @@ const char MQTT_PSWD[] = "mqtt_pass";
 #define DEFAULT_ECO_MODE_STS false
 
 /**
- * @def DEFAULT_SAFE_ZONE_DIAM
- * Default diameter of the SafeZone, default 15
- */
-#define DEFAULT_SAFE_ZONE_DIAM 15
-
-/**
  * @def DEFAULT_INTERVAL
  * Default interval between 2 position refresh, default 5min
  */

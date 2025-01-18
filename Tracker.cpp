@@ -53,9 +53,6 @@ void Tracker::actionInLoop(){
   if(!this->cellular->getWaitingForHandshake() && this->cellular->getHandshakeSuccess()
   && this->positioning->getIsInit() && this->paramSetted){
     byte pos_value = this->positioning->watchDog();
-    if(pos_value & 0x02){
-      this->beginAlarm();
-    }
     if((pos_value & 0x01) && !this->pos_as_been_rq){
       float getLat = 0;
       float getLon = 0;
@@ -81,16 +78,6 @@ void Tracker::actionInLoop(){
   this->pos_as_been_rq = false;
 }
 
-void Tracker::beginAlarm(){
-  if(!alarm_is_on){
-    this->alarm_is_on = true;
-    this->positioning->setInterval(DEFAULT_INTERVAL_WHEN_ALM);
-    this->positioning->setMinimalInterval(DEFAULT_INTERVAL_WHEN_ALM);
-    this->usbDebug->wrt("Alert ! Tracker outside safe zone !");
-    this->cellular->sendMqtt("ALM");
-  }
-}
-
 void Tracker::whenMqttRx(String payload){
   if(payload == "PING"){
     this->usbDebug->wrt("Recived ping"); 
@@ -106,12 +93,6 @@ void Tracker::whenMqttRx(String payload){
     this->sendSts();    
   }else if(payload == "STS-ACK"){
     this->usbDebug->wrt("Server acknoweldge recived status");
-  }else if(payload.startsWith("PRT=")){
-    this->mqtt_whenPrt(payload.charAt(4));
-  }else if(payload == "SFZ-RQ"){
-    this->mqtt_whenSfzRq();
-  }else if(payload == "ALM-ACK"){
-    this->usbDebug->wrt("Server acknoweldge recived alarm");
   }else{
     this->cellular->sendMqtt("ERR");
     this->usbDebug->wrt("Message interpretation failed");
@@ -150,7 +131,7 @@ void Tracker::parseParamFrame(String payload){
   }
 
   if((payload.charAt(8) == '1' || payload.charAt(8) == '0') && !isError){
-    this->mqtt_whenPrt(payload.charAt(8));
+    //this->mqtt_whenPrt(payload.charAt(8));
   }else{
     isError = true;
   }
@@ -161,7 +142,6 @@ void Tracker::parseParamFrame(String payload){
     this->usbDebug->wrt_inline("Safe zone diameter set to : ");
     this->usbDebug->wrt_inline(String(recivedDiam));
     this->usbDebug->wrt("m");
-    this->positioning->setSafeZoneDiam(recivedDiam);
     this->usbDebug->wrt("Param recived !");
     this->cellular->sendMqtt("STG-ACK");
     this->paramSetted = true;
@@ -182,7 +162,7 @@ void Tracker::sendSts(){
   rq += ",";
   rq += String(this->eco_mode);
   rq += ",";
-  rq += String(this->positioning->isProtectionEnable());
+  rq += String("0");
   rq += ",";
   rq += String(this->alarm_is_on);
   rq += ",";
@@ -225,46 +205,6 @@ void Tracker::mqtt_whenPosRq(){
     this->usbDebug->wrt("Position cannot be send...");
     this->cellular->sendMqtt("POS-ERR");
   }
-}
-
-void Tracker::mqtt_whenPrt(char aValue){
-  if(aValue == '1' && !this->positioning->isProtectionEnable() && this->positioning->getIsInit()){
-    this->positioning->enterPrtMode();
-    this->usbDebug->wrt("Server enable protection mode");
-    if(this->positioning->gpsIsFixed()){
-      this->cellular->sendMqtt("PRT-ACK");
-    }else{
-      this->usbDebug->wrt("Caution, protection mode is limited, currently no gps fix...");
-      this->cellular->sendMqtt("PRT-LIM");
-      this->cellular->sendDebugMqtt("Caution protection is limited");
-    }
-  }else if(aValue == '0' && this->positioning->isProtectionEnable() && this->positioning->getIsInit()){
-    this->positioning->quitPrtMode();
-    this->usbDebug->wrt("Server disable protection mode");
-    this->alarm_is_on = false;
-    this->cellular->sendMqtt("PRT-ACK");
-  }else if(aValue != '0' && !this->paramSetted && this->positioning->getIsInit()){
-    this->cellular->sendMqtt("PRT-ERR");
-    this->usbDebug->wrt("Cannot edit protection mode");
-  }
-}
-
-void Tracker::mqtt_whenSfzRq(){
-  this->usbDebug->wrt("Server Request for safe zone position");
-  float sfzLat;
-  float sfzLon;
-  String msg;
-  if(this->positioning->getPrtPos(&sfzLat, &sfzLon)){
-    msg = "SFZ=";
-    msg += String(sfzLat,10);
-    msg += ",";
-    msg += String(sfzLon,10);
-    this->usbDebug->wrt("SafeZone position sended");
-  }else{
-    this->usbDebug->wrt("Cannot send safezone position");
-    msg = "ERR";
-  }
-  this->cellular->sendMqtt(msg);
 }
 
 void Tracker::batteryWatchDog(){

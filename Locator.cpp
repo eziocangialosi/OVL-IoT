@@ -73,15 +73,6 @@ bool Locator::getPos(float* crntLat, float* crntLon){
   return false;
 }
 
-bool Locator::getPrtPos(float* aPrtLat, float* aPrtLon){
-  if(protection_enable){
-    *aPrtLat = this->prtLat;
-    *aPrtLon = this->prtLon;
-    return true;
-  }
-  return false;
-}
-
 byte Locator::watchDog(){
   byte rtn_byte = 0;
   acquire_nmea_while_ms(1000);
@@ -94,29 +85,9 @@ byte Locator::watchDog(){
         rtn_byte += 1;
         this->rqPos();
       }
-      if(protection_enable){
-        if(TinyGPSPlus::distanceBetween(this->gps->location.lat(),this->gps->location.lng(),prtLat,prtLon) >
-        (this->safeZoneDiam / 2))
-        {
-          this->rqPos();
-          rtn_byte += 2;
-          this->pUsbDebug->wrt_inline("Distance with safeZone center : ");
-          this->pUsbDebug->wrt_inline(String(TinyGPSPlus::distanceBetween(lastLat,lastLon,prtLat,prtLon)));
-          this->pUsbDebug->wrt("m");
-        }
-      }
     }
   }
   return rtn_byte;
-}
-
-void Locator::enterPrtMode(){
-  if(this->isInit){
-    this->rqPos();
-    this->protection_enable = true;
-    this->prtLon = this->lastLon;
-    this->prtLat = this->lastLat;
-  } 
 }
 
 void Locator::setInterval(unsigned int secs){
@@ -135,23 +106,6 @@ float Locator::round_float_dp(float in_value, int decimal_place){
 
 bool Locator::getIsInit(){
   return this->isInit;
-}
-
-void Locator::setSafeZoneDiam(unsigned int aDiam){
-  this->safeZoneDiam = aDiam;
-}
-
-bool Locator::isProtectionEnable(){
-  return this->protection_enable;
-}
-
-void Locator::quitPrtMode(){
-  this->rqPos();
-  this->protection_enable = false;
-  this->prtLon = 0;
-  this->prtLat = 0;
-  this->interval = DEFAULT_INTERVAL;
-  this->min_interval = MINIMAL_INTERVAL;
 }
 
 bool Locator::gpsIsFixed(){
